@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Pedido DYUP</title>
+<link rel="icon" href="img/icone.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* Página do pedido: abre pelo link que o cliente manda no WhatsApp. Os dados vêm no endereço, depois do # */
+:root{--carbono:#101820;--volt:#D0DF00;--branco:#F8F7F2;--bg:#F8F7F2;--fg:#101820;--muted:#5f6670;--line:#dedcd4;--card:#fff;--chip:#ecebe4;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0b1117;--fg:#F8F7F2;--muted:#9aa1a8;--line:#24303b;--card:#101820;--chip:#1c2833;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b1117;--fg:#F8F7F2;--muted:#9aa1a8;--line:#24303b;--card:#101820;--chip:#1c2833;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.45}
+.wrap{max-width:820px;margin:0 auto;padding-inline:16px}
+header{background:var(--carbono);color:var(--branco)}
+header .wrap{padding-block:26px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px}
+header img{height:40px;display:block}
+.end{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#c8cacc;margin-top:10px}
+.num{text-align:right}
+.num b{display:block;color:var(--volt);font-size:22px;font-weight:800;letter-spacing:-.01em}
+.num span{font-family:var(--mono);font-size:12px;color:#c8cacc}
+.rf{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.cli{display:flex;gap:40px;padding-block:22px 6px}
+.cli b{display:block;font-size:17px}
+ul{list-style:none;margin:10px 0 0;padding:0;border-top:1.5px solid var(--fg)}
+li{display:grid;grid-template-columns:84px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+li img{width:84px;height:84px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:6px}
+.mk{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.mo{font-weight:700;font-size:16px;line-height:1.25}
+.co{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;margin-top:2px}
+.va{text-align:right;font-family:var(--mono);font-size:13px;white-space:nowrap}
+.va .tm{display:inline-block;background:var(--chip);border-radius:4px;padding:5px 8px;font-weight:600;margin-bottom:6px}
+.va b{display:block;font-size:14px;margin-top:4px}
+.tot{display:flex;justify-content:space-between;align-items:center;background:var(--volt);color:var(--carbono);padding:14px 16px;margin-top:16px;border-radius:4px}
+.tot b{font-size:22px;font-weight:800}
+.pag{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-top:14px;background:var(--card)}
+.pag h2{margin:0 0 8px;font-size:14px}
+.pag p{margin:4px 0;font-size:14px}
+.pag small{color:var(--muted)}
+.acoes{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 40px}
+.bt{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:8px;padding:13px 18px;font:700 14px/1 var(--sans);text-decoration:none;cursor:pointer;border:0}
+.bt.p{background:var(--carbono);color:var(--volt)}
+.bt.s{background:transparent;color:var(--fg);box-shadow:inset 0 0 0 1.5px var(--fg)}
+.obs{font-size:12px;color:var(--muted)}
+.erro{padding:60px 0;text-align:center}
+@media (max-width:520px){li{grid-template-columns:64px minmax(0,1fr)}li img{width:64px;height:64px}.va{grid-column:2;text-align:left}.va b{display:inline;margin-left:8px}.cli{gap:24px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div><img src="img/logo-volt.png" alt="DYUP"><div class="end">Rua Cambira, 447 · Maringá · PR · WhatsApp (44) 99121-8494</div></div>
+  <div class="num"><b>Pedido</b><span id="num"></span></div>
+</div></header>
+<main class="wrap" id="main"></main>
+<script>
+const brl = v => "R$ " + v.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d),)/g, ".");
+const esc = s => String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const LOJA = {end:"Rua Cambira, 447 · Maringá · PR", zap:"(44) 99121-8494"};
+function ler(){
+  try{
+    const s = location.hash.slice(1).replace(/-/g,"+").replace(/_/g,"/");
+    const o = JSON.parse(decodeURIComponent(escape(atob(s))));
+    const itens = o.i.map(([marca,modelo,cor,ref,tam,q,preco])=>({marca:String(marca),modelo:String(modelo),cor:String(cor||""),ref:String(ref),tam:String(tam),q:Math.max(1,parseInt(q)||1),preco:Number(preco)||0}));
+    if(!itens.length) return null;
+    return {n:String(o.n), d:o.d, c:String(o.c||""), itens};
+  }catch(e){ return null; }
+}
+const fotoUrl = ref => "fotos/" + encodeURIComponent(ref.split(" / ")[0]) + ".jpg";
+const P = ler();
+if(!P){
+  document.getElementById("main").innerHTML = `<div class="erro"><h1>Pedido não encontrado</h1><p class="obs">O link pode ter sido cortado. Peça para o cliente enviar de novo pelo catálogo.</p><p><a class="bt s" href="./">Ver o catálogo</a></p></div>`;
+} else {
+  const dt = new Date(P.d);
+  const dataTxt = isNaN(dt) ? "" : dt.toLocaleDateString("pt-BR")+" "+dt.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+  document.getElementById("num").textContent = `Nº ${P.n} · ${dataTxt}`;
+  document.title = `Pedido ${P.n} · DYUP`;
+  const tot = P.itens.reduce((s,c)=>s+c.q*c.preco,0), pecas = P.itens.reduce((s,c)=>s+c.q,0);
+  const parc = Math.max(1, Math.min(10, Math.floor(tot/100)));
+  document.getElementById("main").innerHTML = `
+    <div class="cli"><div><span class="rf">Cliente</span><b>${esc(P.c||"Não informado")}</b></div><div><span class="rf">Itens</span><b>${pecas} ${pecas>1?"pares":"par"}</b></div></div>
+    <ul>${P.itens.map(c=>`<li>
+      <img src="${fotoUrl(c.ref)}" alt="" onerror="this.style.visibility='hidden'">
+      <div><div class="mk">${esc(c.marca)}</div><div class="mo">${esc(c.modelo)}</div><div class="co">${esc(c.cor)}</div><div class="co">Ref. ${esc(c.ref)}</div></div>
+      <div class="va"><span class="tm">Tam. ${esc(c.tam)}</span> × ${c.q}<br>${brl(c.preco)} un.<b>${brl(c.preco*c.q)}</b></div></li>`).join("")}</ul>
+    <div class="tot"><span class="rf" style="color:inherit">Total</span><b>${brl(tot)}</b></div>
+    <div class="pag"><h2>Formas de pagamento</h2>
+      <p><b>Cartão de crédito</b> em até 10x, parcela mínima de R$ 100,00<br><small>${parc>1?`Neste pedido: até ${parc}x de ${brl(tot/parc)}`:"Neste pedido: 1x no crédito"}</small></p>
+      <p><b>Cartão de débito</b></p><p><b>PIX</b></p></div>
+    <div class="acoes"><button class="bt p" type="button" id="pdf">Baixar PDF do pedido</button><a class="bt s" href="./">Ver o catálogo</a></div>
+    <p class="obs">Pedido sujeito à confirmação de estoque. Preços sujeitos a alteração. Os valores vêm do link enviado pelo cliente, então confira com o catálogo antes de fechar.</p>`;
+  document.getElementById("pdf").addEventListener("click", async e=>{
+    const b = e.currentTarget;
+    if(!window.jspdf){ b.textContent = "Carregando, tente de novo"; return; }
+    b.textContent = "Gerando PDF…";
+    const dataUrl = async u => { try{ const r = await fetch(u); if(!r.ok) return null; const bl = await r.blob(); return await new Promise(ok=>{ const f=new FileReader(); f.onload=()=>ok(f.result); f.readAsDataURL(bl); }); }catch(_){ return null; } };
+    const fotos = {};
+    for(const c of P.itens) if(!(c.ref in fotos)) fotos[c.ref] = await dataUrl(fotoUrl(c.ref));
+    const LOGO = await dataUrl("img/logo-volt.png");
+    const {doc} = gerarPdf(P, fotos, LOGO);
+    doc.save(`pedido-dyup-${P.n}.pdf`);
+    b.textContent = "Baixar PDF do pedido";
+  });
+}
+function gerarPdf(P, fotos, LOGO){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:"mm", format:"a4"});
+  const W=210, M=14, CARB=[16,24,32], VOLT=[208,223,0], CINZA=[95,102,112], LINHA=[222,220,212];
+  const agora = new Date(P.d), num = P.n;
+  const dataTxt = agora.toLocaleDateString("pt-BR")+" "+agora.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+  const nome = P.c; const car = P.itens;
+  const tot = car.reduce((s,c)=>s+c.q*c.preco,0);
+  const pecas = car.reduce((s,c)=>s+c.q,0);
+  // cabeçalho
+  doc.setFillColor(...CARB); doc.rect(0,0,W,42,"F");
+  if(LOGO) doc.addImage(LOGO,"PNG",M,11,44,44*349/1200);
+  doc.setTextColor(200,202,204); doc.setFont("helvetica","normal"); doc.setFontSize(9);
+  doc.text("LOJA DE CORRIDA E TÊNIS", M, 31);
+  doc.text(LOJA.end+"   ·   WhatsApp "+LOJA.zap, M, 36);
+  doc.setTextColor(...VOLT); doc.setFont("helvetica","bold"); doc.setFontSize(18);
+  doc.text("PEDIDO", W-M, 18, {align:"right"});
+  doc.setTextColor(248,247,242); doc.setFont("helvetica","normal"); doc.setFontSize(9.5);
+  doc.text("Nº "+num, W-M, 25, {align:"right"});
+  doc.text(dataTxt, W-M, 30.5, {align:"right"});
+  let y = 52;
+  doc.setTextColor(...CINZA); doc.setFontSize(8.5); doc.text("CLIENTE", M, y);
+  doc.text("ITENS", 120, y);
+  doc.setTextColor(...CARB); doc.setFont("helvetica","bold"); doc.setFontSize(12);
+  doc.text(nome || "Não informado", M, y+6);
+  doc.text(`${pecas} ${pecas>1?"pares":"par"}`, 120, y+6);
+  y += 14;
+  // cabeçalho da tabela
+  const cab = () => { doc.setDrawColor(...CARB); doc.setLineWidth(.4); doc.line(M,y,W-M,y);
+    doc.setFont("helvetica","normal"); doc.setFontSize(8); doc.setTextColor(...CINZA);
+    doc.text("PRODUTO", M+34, y+5); doc.text("TAM.", 120, y+5, {align:"center"}); doc.text("QTD", 137, y+5, {align:"center"});
+    doc.text("UNITÁRIO", 167, y+5, {align:"right"}); doc.text("SUBTOTAL", W-M, y+5, {align:"right"}); y += 9; };
+  cab();
+  for(const c of car){
+    if(y > 240){ doc.addPage(); y = 18; cab(); }
+    const foto = fotos[c.ref];
+    doc.setDrawColor(...LINHA); doc.setLineWidth(.3); doc.roundedRect(M, y, 28, 28, 1.5, 1.5, "S");
+    if(foto){ try{ doc.addImage(foto,"JPEG",M+.6,y+.6,26.8,26.8); }catch(_){} }
+    const x = M+34;
+    doc.setFont("helvetica","normal"); doc.setFontSize(8); doc.setTextColor(...CINZA); doc.text(c.marca, x, y+6);
+    doc.setFont("helvetica","bold"); doc.setFontSize(12); doc.setTextColor(...CARB);
+    doc.text(doc.splitTextToSize(c.modelo, 62)[0], x, y+12);
+    doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor(...CINZA);
+    if(c.cor) doc.text(doc.splitTextToSize(c.cor, 62)[0], x, y+17.5);
+    doc.text("Ref. "+c.ref, x, y+22.5);
+    doc.setFillColor(236,235,228); doc.roundedRect(113, y+8, 14, 10, 1.2, 1.2, "F");
+    doc.setFont("helvetica","bold"); doc.setFontSize(12); doc.setTextColor(...CARB);
+    doc.text(String(c.tam), 120, y+14.8, {align:"center"});
+    doc.setFont("helvetica","normal"); doc.setFontSize(11); doc.text(String(c.q), 137, y+14.8, {align:"center"});
+    doc.setFontSize(10); doc.text(brl(c.preco), 167, y+14.8, {align:"right"});
+    doc.setFont("helvetica","bold"); doc.text(brl(c.preco*c.q), W-M, y+14.8, {align:"right"});
+    y += 31; doc.setDrawColor(...LINHA); doc.line(M, y-1.5, W-M, y-1.5);
+  }
+  if(y > 200){ doc.addPage(); y = 18; }
+  // total
+  y += 3;
+  doc.setFillColor(...VOLT); doc.rect(W-M-80, y, 80, 14, "F");
+  doc.setTextColor(...CARB); doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.text("TOTAL", W-M-76, y+8.8);
+  doc.setFont("helvetica","bold"); doc.setFontSize(15); doc.text(brl(tot), W-M-4, y+9.5, {align:"right"});
+  // formas de pagamento
+  const parc = Math.max(1, Math.min(10, Math.floor(tot/100)));
+  doc.setDrawColor(...CARB); doc.setLineWidth(.3); doc.roundedRect(M, y, 96, 46, 2, 2, "S");
+  doc.setFont("helvetica","bold"); doc.setFontSize(10); doc.text("FORMAS DE PAGAMENTO", M+5, y+7);
+  doc.setFont("helvetica","normal"); doc.setFontSize(9.5);
+  const fp = [
+    ["Cartão de crédito", "Em até 10x, parcela mínima de R$ 100,00"],
+    ["", parc>1 ? `Neste pedido: até ${parc}x de ${brl(tot/parc)}` : "Neste pedido: 1x no crédito"],
+    ["Cartão de débito", ""],
+    ["PIX", ""],
+  ];
+  let yy = y+14;
+  for(const [a,b] of fp){
+    if(a){ doc.setFont("helvetica","bold"); doc.setTextColor(...CARB); doc.text("•  "+a, M+5, yy); yy += 5; }
+    if(b){ doc.setFont("helvetica","normal"); doc.setTextColor(...CINZA); doc.text(b, M+9.5, yy); yy += 5; }
+    yy += 1.2;
+  }
+  // próximos passos
+  const yN = y+20;
+  doc.setFont("helvetica","bold"); doc.setFontSize(10); doc.text("PRÓXIMOS PASSOS", W-M-80, yN+4);
+  doc.setFont("helvetica","normal"); doc.setFontSize(8.8); doc.setTextColor(...CINZA);
+  doc.text(doc.splitTextToSize(`Envie este pedido para o WhatsApp ${LOJA.zap}. A loja confirma a disponibilidade, o pagamento e a retirada ou entrega.`, 80), W-M-80, yN+9.5);
+  // rodapé
+  doc.setDrawColor(...LINHA); doc.line(M, 282, W-M, 282);
+  doc.setFontSize(7.5); doc.setTextColor(...CINZA);
+  doc.text(`Pedido Nº ${num} feito pelo catálogo DYUP em ${dataTxt}. Sujeito à confirmação de estoque. Preços sujeitos a alteração.`, M, 287);
+  const n = doc.getNumberOfPages();
+  for(let k=1;k<=n;k++){ doc.setPage(k); doc.setFontSize(7.5); doc.setTextColor(...CINZA); doc.text(`${k}/${n}`, W-M, 287, {align:"right"}); }
+  return {doc, num};
+}
+</script>
+</body>
+</html>

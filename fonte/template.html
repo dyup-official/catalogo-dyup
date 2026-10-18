@@ -1,0 +1,349 @@
+<title>Catálogo DYUP</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<meta name="description" content="Catálogo DYUP: tênis de corrida e de quadra disponíveis na loja. Rua Cambira, 447, Maringá.">
+<link rel="icon" href="img/icone.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: faixa de marca em Carbono, filtros fixos, grade de cards de produto com o preço em caixa volt */
+:root{
+  --carbono:#101820; --volt:#D0DF00; --branco:#F8F7F2;
+  --bg:#F8F7F2; --fg:#101820; --muted:#5f6670; --line:#dedcd4; --card:#ffffff;
+  --tile:#101820; --tile-fg:#F8F7F2; --chip:#ecebe4; --chip-on:#101820; --chip-on-fg:#F8F7F2;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b1117; --fg:#F8F7F2; --muted:#9aa1a8; --line:#24303b; --card:#101820;
+  --tile:#17222c; --tile-fg:#F8F7F2; --chip:#1c2833; --chip-on:#D0DF00; --chip-on-fg:#101820; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b1117; --fg:#F8F7F2; --muted:#9aa1a8; --line:#24303b; --card:#101820;
+  --tile:#17222c; --tile-fg:#F8F7F2; --chip:#1c2833; --chip-on:#D0DF00; --chip-on-fg:#101820; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.45}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.marca{background:var(--carbono);color:var(--branco);position:relative;overflow:hidden}
+header.marca .wrap{padding-block:36px 40px;position:relative}
+header.marca img.logo{height:46px;width:auto;display:block}
+header.marca .circ{position:absolute;right:-40px;top:-30px;height:220px;opacity:.14;pointer-events:none}
+.end{display:inline-flex;align-items:center;gap:7px;margin-top:12px;font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#c8cacc;text-decoration:none}
+.end:hover{color:var(--volt)}
+.end svg{width:15px;height:15px;fill:none;stroke:var(--volt);stroke-width:2}
+.chamada{margin:28px 0 0;font-size:clamp(28px,4.2vw,46px);line-height:1.04;font-weight:800;letter-spacing:-.03em;color:var(--branco)}
+.chamada em{font-style:normal;color:var(--carbono);background:var(--volt);padding:0 .14em;border-radius:4px}
+.apoio{margin:14px 0 0;max-width:36ch;color:#c8cacc;font-size:14.5px}
+@media (max-width:760px){header.marca .wrap{padding-block:28px 26px}}
+.guia{border-bottom:1px solid var(--line)}
+.guia .wrap{padding-block:14px}
+.barra{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.barra span{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.barra select{flex:1 1 280px;max-width:460px;font:600 13.5px var(--sans);background:var(--card);border:1px solid var(--line);cursor:pointer}
+.barra select:hover{border-color:var(--fg)}
+.guia .desc{margin:8px 0 0;font-size:13px;color:var(--muted)}
+.tams button{all:unset;box-sizing:border-box;cursor:pointer;font:500 12.5px/1 var(--mono);font-variant-numeric:tabular-nums;padding:8px 9px;border-radius:4px;background:var(--chip);color:var(--fg)}
+.tams button.on{box-shadow:inset 0 0 0 1.5px var(--fg)}
+.tams button[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-fg);box-shadow:none}
+.tams button:focus-visible{outline:2px solid var(--volt);outline-offset:2px}
+.add{font:600 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;border:0;border-radius:4px;padding:10px 12px;background:var(--carbono);color:var(--branco);cursor:pointer}
+.add:disabled{opacity:.35;cursor:default}
+.dica{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.carBtn{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;align-items:center;gap:9px;border:0;border-radius:999px;padding:13px 18px;background:var(--volt);color:var(--carbono);font:700 13px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;box-shadow:0 10px 28px rgba(16,24,32,.35);cursor:pointer}
+.carBtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
+.carBtn .n{background:var(--carbono);color:var(--volt);border-radius:999px;min-width:22px;padding:4px 6px;text-align:center}
+.carBtn.pulo{animation:pulo .35s}
+@keyframes pulo{50%{transform:scale(1.08)}}
+dialog.car{border:0;padding:0;margin:0 0 0 auto;height:100%;max-height:100%;width:min(420px,100%);background:var(--bg);color:var(--fg)}
+dialog.car::backdrop{background:rgba(16,24,32,.55)}
+.car .in{display:flex;flex-direction:column;height:100%}
+.car header{display:flex;justify-content:space-between;align-items:center;padding:18px 18px 14px;border-bottom:1px solid var(--line)}
+.car header h2{margin:0;font-size:20px;font-weight:800}
+.car .x{border:0;background:var(--chip);color:var(--fg);border-radius:999px;width:34px;height:34px;font-size:18px;cursor:pointer}
+.car ul{list-style:none;margin:0;padding:6px 18px;overflow:auto;flex:1}
+.car li{display:grid;grid-template-columns:56px 1fr auto;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+.car li img{width:56px;height:56px;object-fit:contain;background:#fff;border-radius:4px}
+.car li .t{font-weight:700;font-size:14px;line-height:1.25}
+.car li .s{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--muted);text-transform:uppercase;margin-top:3px}
+.car li .p{font-family:var(--mono);font-size:13px;margin-top:6px}
+.qt{display:flex;align-items:center;gap:6px}
+.qt button{border:0;background:var(--chip);color:var(--fg);width:28px;height:28px;border-radius:4px;font:600 15px/1 var(--mono);cursor:pointer}
+.qt span{font-family:var(--mono);min-width:16px;text-align:center}
+.rm{display:block;margin:6px 0 0 auto;border:0;background:none;color:var(--muted);font:500 10.5px var(--mono);text-transform:uppercase;letter-spacing:.08em;cursor:pointer;text-decoration:underline}
+.car .vaz{padding:40px 18px;text-align:center;color:var(--muted);font-family:var(--mono);font-size:13px}
+.car .fim{padding:16px 18px calc(18px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
+.car .tot{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;font-size:12px;color:var(--muted)}
+.car .tot b{font-size:20px;color:var(--fg);letter-spacing:0}
+.car input{width:100%;box-sizing:border-box}
+.zap{display:flex;justify-content:center;align-items:center;gap:9px;border:0;border-radius:8px;padding:15px;background:#25D366;color:#0b2e17;font:700 14px/1 var(--sans);cursor:pointer}
+.zap{text-decoration:none}.zap[aria-disabled="true"]{opacity:.4;pointer-events:none}
+.zap svg{width:20px;height:20px;fill:currentColor}
+.obs{font-size:11.5px;color:var(--muted);text-align:center;margin:0}
+.toast{position:fixed;left:50%;bottom:86px;transform:translate(-50%,20px);opacity:0;z-index:30;background:var(--carbono);color:var(--branco);padding:11px 16px;border-radius:999px;font:500 13px var(--mono);transition:.25s;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+main{padding-bottom:70px}
+#cont{scroll-margin-top:190px}
+.filtros{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.filtros .wrap{padding-block:12px;display:flex;flex-wrap:wrap;gap:12px 20px;align-items:flex-start}
+.grupo{display:flex;flex-wrap:wrap;gap:6px}
+button.f{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;border:0;border-radius:999px;padding:9px 12px;background:var(--chip);color:var(--fg);cursor:pointer}
+button.f[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-fg)}
+button.f:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--volt);outline-offset:2px}
+select,input{font:500 13px var(--mono);background:var(--chip);color:var(--fg);border:0;border-radius:8px;padding:9px 10px}
+input{min-width:0}
+.campo{display:flex;flex-direction:column;gap:5px;min-width:0}
+.rf{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.linha{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;width:100%}
+.busca{flex:0 1 280px}
+.busca input{width:100%}
+main .wrap{padding-block:20px 48px}
+.cont{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.foto{aspect-ratio:4/3;max-width:100%;background:var(--tile);color:var(--tile-fg);position:relative;display:flex;align-items:flex-end;padding:14px}
+.foto img.c{position:absolute;right:12px;top:12px;height:58%;opacity:.22}
+.foto.tem{background:#fff}
+.foto img.p{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:6%}
+.foto.tem .cat{color:var(--carbono);background:var(--volt);padding:4px 6px;border-radius:3px}
+.foto.tem .ref{color:#6b7178}
+.foto .ref{position:relative;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:#9aa1a8}
+.foto .cat{z-index:1;position:absolute;left:14px;top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--volt)}
+.info{padding:14px 14px 16px;display:flex;flex-direction:column;gap:10px;flex:1}
+.mk{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+h2{font-size:20px;line-height:1.15;letter-spacing:-.015em;margin:2px 0 0;text-wrap:balance}
+.cor{font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;color:var(--muted);text-transform:uppercase}
+.hc{display:flex;flex-direction:column;gap:4px}
+.hc{flex-direction:row;flex-wrap:wrap;gap:5px}
+.hc span{font:500 11px/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--fg);border-radius:3px;padding:5px 7px}
+.rot{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.tams{display:flex;flex-wrap:wrap;gap:5px}
+.tams span{font:500 12.5px/1 var(--mono);font-variant-numeric:tabular-nums;padding:7px 8px;border-radius:4px;background:var(--chip)}
+.tams span.on{background:var(--chip-on);color:var(--chip-on-fg)}
+.rodape{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:4px}
+.preco{font:500 15px/1 var(--mono);letter-spacing:.04em;background:var(--volt);color:var(--carbono);padding:8px 10px;border-radius:3px;font-variant-numeric:tabular-nums}
+.pares{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.vazio{padding:48px 0;text-align:center;color:var(--muted);font-family:var(--mono);font-size:13px}
+footer{border-top:1px solid var(--line)}
+footer .wrap{padding-block:18px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+@media (max-width:520px){header.marca img.logo{height:36px}}
+@media (max-width:760px){.filtros{position:static}#cont{scroll-margin-top:12px}.barra{gap:6px}.barra select{flex-basis:100%;max-width:none}}
+</style>
+
+<header class="marca">
+  <img class="circ" src="img/circuito.png" alt="">
+  <div class="wrap">
+    <div class="hero-txt">
+      <img class="logo" src="img/logo-volt.png" alt="DYUP">
+      <a class="end" href="https://www.google.com/maps/search/?api=1&query=Rua+Cambira+447+Maring%C3%A1+PR" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+        Rua Cambira, 447 · Maringá · PR</a>
+      <p class="chamada">Encontre o tênis certo<br>para <em>você</em>.</p>
+      <p class="apoio">Monte seu pedido aqui no catálogo e envie direto para o nosso WhatsApp.</p>
+    </div>
+  </div>
+</header>
+<section class="guia" id="guia" aria-labelledby="guiaT">
+  <div class="wrap">
+    <label class="barra" for="opcoes"><span id="guiaT">Qual tênis é pra mim?</span>
+      <select id="opcoes"><option value="">Escolha o seu esporte ou o seu tipo de corrida</option></select></label>
+    <p class="desc" id="guiaD" hidden></p>
+  </div>
+</section>
+
+<nav class="filtros" aria-label="Filtros">
+  <div class="wrap">
+    <div class="campo"><span class="rf">Marca</span><div class="grupo" id="fMarca"></div></div>
+    <div class="campo"><span class="rf">Categoria</span><div class="grupo" id="fCat"></div></div>
+    <div class="linha">
+      <label class="campo" for="fHc"><span class="rf">Tipo de corrida</span><select id="fHc"><option value="">Todos</option></select></label>
+      <label class="campo" for="fTam"><span class="rf">Tamanho</span><select id="fTam"><option value="">Todos</option></select></label>
+      <label class="campo" for="fOrd"><span class="rf">Ordenar por</span><select id="fOrd">
+        <option value="marca">Marca e modelo</option>
+        <option value="menor">Menor preço</option>
+        <option value="maior">Maior preço</option>
+      </select></label>
+      <label class="campo busca" for="fBusca"><span class="rf">Buscar</span><input id="fBusca" type="search" placeholder="Modelo, cor ou referência"></label>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+    <p class="cont" id="cont"></p>
+    <div class="grade" id="grade"></div>
+  </div>
+</main>
+
+<footer><div class="wrap">Só numerações disponíveis · preços sujeitos a alteração</div></footer>
+
+<button class="carBtn" id="carBtn" type="button" aria-haspopup="dialog">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l-1.4 11.2a2 2 0 0 1-2 1.8H8.4a2 2 0 0 1-2-1.8L5 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+  Pedido <span class="n" id="carN">0</span></button>
+<dialog class="car" id="car" aria-labelledby="carT"><div class="in">
+  <header><h2 id="carT">Seu pedido</h2><button class="x" type="button" id="carX" aria-label="Fechar">×</button></header>
+  <ul id="carL"></ul>
+  <div class="fim">
+    <div class="tot">Total <b id="carTot">R$ 0,00</b></div>
+    <label class="campo" for="carNome"><span class="rf">Seu nome</span><input id="carNome" type="text" autocomplete="name" placeholder="Para a gente te atender"></label>
+    <a class="zap" id="carZap" href="https://wa.me/5544991218494" target="_blank" rel="noopener noreferrer" aria-disabled="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3.1s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.3 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.2.1.7-.1 1.4Z"/></svg>Enviar pedido pelo WhatsApp</a>
+    <p class="obs">O pedido vai como um link com fotos, tamanhos e valores. A loja confirma a disponibilidade e o pagamento pelo WhatsApp.</p>
+  </div>
+</div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const ITENS = __DADOS__;
+const CIRC = "img/circuito.png";
+const brl = v => "R$ " + v.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d),)/g, ".");
+const tc = s => s.toLowerCase().replace(/(^|[\s/-])(\p{L})/gu, (m,a,b)=>a+b.toUpperCase());
+const HCN = __HCNOMES__;
+const st = {marca:"", cat:"", hc:"", tam:"", ord:"marca", q:""};
+const $ = id => document.getElementById(id);
+
+function chips(el, valores, chave, rotuloTodos){
+  const lista = ["", ...valores];
+  el.innerHTML = lista.map(v => `<button class="f" type="button" data-v="${v}" aria-pressed="${v===st[chave]}">${v||rotuloTodos}</button>`).join("");
+  el.addEventListener("click", e => {
+    const b = e.target.closest("button"); if(!b) return;
+    st[chave] = b.dataset.v;
+    el.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x.dataset.v===st[chave]));
+    pintaOpc();
+    render();
+  });
+}
+const uniq = a => [...new Set(a)];
+
+chips($("fMarca"), uniq(ITENS.map(i=>i.marca)).sort(), "marca", "Todas");
+chips($("fCat"), ["Corrida","Trail","Quadra","Treino","Casual","Infantil"].filter(c=>ITENS.some(i=>i.cat===c)), "cat", "Todos");
+const tams = uniq(ITENS.flatMap(i=>i.tam)).sort((a,b)=>parseFloat(a)-parseFloat(b));
+$("fTam").insertAdjacentHTML("beforeend", tams.map(t=>`<option value="${t}">${t}</option>`).join(""));
+$("fHc").insertAdjacentHTML("beforeend", Object.keys(HCN).filter(k=>ITENS.some(i=>i.hc.includes(k))).map(k=>`<option value="${k}">${HCN[k]}</option>`).join(""));
+$("fHc").addEventListener("change", e=>{st.hc=e.target.value;pintaOpc();render()});
+$("fTam").addEventListener("change", e=>{st.tam=e.target.value;render()});
+$("fOrd").addEventListener("change", e=>{st.ord=e.target.value;render()});
+$("fBusca").addEventListener("input", e=>{st.q=e.target.value.trim().toLowerCase();render()});
+
+function render(){
+  let L = ITENS.filter(i =>
+    (!st.marca || i.marca===st.marca) && (!st.cat || i.cat===st.cat) && (!st.hc || i.hc.includes(st.hc)) && (!st.tam || i.tam.includes(st.tam)) &&
+    (!st.q || [i.marca,i.modelo,i.cor,...i.refs].join(" ").toLowerCase().includes(st.q)));
+  if(st.ord==="menor") L.sort((a,b)=>a.preco-b.preco);
+  else if(st.ord==="maior") L.sort((a,b)=>b.preco-a.preco);
+  $("cont").textContent = L.length ? `${L.length} ${L.length>1?"opções":"opção"}` : "";
+  $("grade").innerHTML = L.length ? L.map(i => `
+    <article class="card">
+      <div class="foto${i.foto?" tem":""}">
+        ${i.foto?`<img class="p" src="${i.foto}" alt="${i.marca} ${i.modelo} ${i.cor}" loading="lazy">`:`<img class="c" src="${CIRC}" alt="">`}
+        <span class="cat">${i.cat}</span>
+        <span class="ref">REF ${i.refs.join(" · ")}</span>
+      </div>
+      <div class="info">
+        <div>
+          <div class="mk">${i.marca}</div>
+          <h2>${i.modelo}</h2>
+          ${i.cor?`<div class="cor">${i.cor}</div>`:""}
+        </div>
+        ${i.hc.length?`<div class="hc">${i.hc.map(k=>`<span>${HCN[k]}</span>`).join("")}</div>`:""}
+        <div>
+          <div class="rot">Tamanhos</div>
+          <div class="tams" data-id="${i.id}">${i.tam.map(t=>`<button type="button" data-t="${t}" aria-pressed="${sel[i.id]===t}" class="${t===st.tam?"on":""}">${t}</button>`).join("")}</div>
+        </div>
+        <div class="rodape"><span class="preco">${brl(i.preco)}</span><button class="add" type="button" data-id="${i.id}" ${sel[i.id]?"":"disabled"}>Adicionar</button></div>
+        ${sel[i.id]?"":`<div class="dica">Escolha o tamanho para adicionar</div>`}
+      </div>
+    </article>`).join("") : `<div class="vazio">Nenhum tênis com esses filtros.</div>`;
+}
+ITENS.forEach((i,n)=>{ i.id = n; });
+const sel = {};
+ITENS.forEach(i=>{ if(i.tam.length===1) sel[i.id]=i.tam[0]; });
+
+// Qual tênis é pra mim?
+const DESC = {A1:"Máximo conforto para rodar longo e recuperar.",A2:"O parceiro do dia a dia, para quase todo treino.",
+  A3:"Conforto máximo com mais apoio para a pisada.",A4:"Dia a dia com mais firmeza para a pisada.",
+  B1:"Leve e responsivo para treinos de ritmo.",B2:"Mais propulsão para treinos rápidos e longões.",
+  B3:"Feito para buscar o seu melhor tempo na prova.",B4:"Rápido, com mais apoio para a pisada.",
+  C1:"Aderência e proteção para terra e trilha.",C2:"Bom tênis para correr sem pesar no bolso."};
+const opc = Object.keys(HCN).filter(k=>ITENS.some(i=>i.hc.includes(k)));
+const temQuadra = ITENS.some(i=>i.cat==="Quadra");
+DESC.Q = "Modelos para saibro e quadra rápida.";
+function pintaOpc(){
+  const ativo = st.hc || (st.cat==="Quadra" ? "Q" : "");
+  $("opcoes").value = ativo;
+  $("guiaD").hidden = !ativo;
+  $("guiaD").textContent = ativo ? DESC[ativo] : "";
+}
+function pintaCat(){ $("fCat").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x.dataset.v===st.cat)); }
+$("opcoes").insertAdjacentHTML("beforeend",
+  (temQuadra?`<optgroup label="Tênis de quadra"><option value="Q">Tênis de quadra</option></optgroup>`:"")
+  + `<optgroup label="Corrida">${opc.map(k=>`<option value="${k}">${HCN[k]}</option>`).join("")}</optgroup>`);
+$("opcoes").addEventListener("change", e=>{
+  const k = e.target.value;
+  if(k==="Q"){ st.hc=""; st.cat="Quadra"; }
+  else { st.hc=k; if(st.cat==="Quadra") st.cat=""; }
+  $("fHc").value = st.hc; pintaCat(); pintaOpc(); render();
+  if(k) $("cont").scrollIntoView({behavior:"smooth", block:"start"});
+});
+
+// Carrinho
+const ZAP = "5544991218494";
+const chave = (i,t) => i.refs.join("/")+"|"+t;
+let car = [];
+try{ car = JSON.parse(localStorage.getItem("dyupCarrinho")||"[]"); }catch(e){ car = []; }
+car = car.filter(c=>ITENS.some(i=>chave(i,c.tam)===c.k && i.tam.includes(c.tam)));
+try{ $("carNome").value = localStorage.getItem("dyupNome")||""; }catch(e){}
+const salva = () => { try{ localStorage.setItem("dyupCarrinho", JSON.stringify(car)); }catch(e){} };
+const item = k => ITENS.find(i=>chave(i,k.split("|")[1])===k);
+function toast(t){ const el=$("toast"); el.textContent=t; el.classList.add("on"); clearTimeout(toast.h); toast.h=setTimeout(()=>el.classList.remove("on"),1800); }
+function pintaCar(){
+  const n = car.reduce((s,c)=>s+c.q,0), tot = car.reduce((s,c)=>s+c.q*c.preco,0);
+  $("carN").textContent = n;
+  $("carTot").textContent = brl(tot);
+  $("carZap").setAttribute("aria-disabled", !car.length);
+  $("carZap").href = linkZap();
+  $("carL").innerHTML = car.length ? car.map((c,x)=>{ const i=item(c.k); return `<li>
+      ${i&&i.foto?`<img src="${i.foto}" alt="">`:`<span></span>`}
+      <div><div class="t">${c.marca} ${c.modelo}</div><div class="s">${c.cor?c.cor+" · ":""}Tam. ${c.tam}</div><div class="p">${brl(c.preco)}</div></div>
+      <div><div class="qt"><button type="button" data-x="${x}" data-d="-1" aria-label="Diminuir">−</button><span>${c.q}</span><button type="button" data-x="${x}" data-d="1" aria-label="Aumentar">+</button></div>
+      <button class="rm" type="button" data-rm="${x}">Remover</button></div></li>`; }).join("")
+    : `<li class="vaz" style="display:block">Seu pedido está vazio. Escolha um tamanho e toque em Adicionar.</li>`;
+}
+$("grade").addEventListener("click", e=>{
+  const t = e.target.closest(".tams button");
+  if(t){ const id=+t.parentNode.dataset.id; sel[id] = sel[id]===t.dataset.t ? undefined : t.dataset.t; render(); return; }
+  const a = e.target.closest(".add");
+  if(a){ const i=ITENS[+a.dataset.id], tam=sel[i.id]; if(!tam) return;
+    const k=chave(i,tam), ex=car.find(c=>c.k===k);
+    if(ex) ex.q++; else car.push({k, marca:i.marca, modelo:i.modelo, cor:i.cor, ref:i.refs.join(" / "), tam, preco:i.preco, q:1});
+    salva(); pintaCar(); toast(`${i.modelo} · tam. ${tam} adicionado`);
+    $("carBtn").classList.remove("pulo"); void $("carBtn").offsetWidth; $("carBtn").classList.add("pulo"); }
+});
+$("carL").addEventListener("click", e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  if(b.dataset.rm!==undefined) car.splice(+b.dataset.rm,1);
+  else { const c=car[+b.dataset.x]; c.q=Math.max(1,c.q+(+b.dataset.d)); }
+  salva(); pintaCar();
+});
+$("carBtn").addEventListener("click", ()=>{ pintaCar(); $("car").showModal(); });
+$("carX").addEventListener("click", ()=>$("car").close());
+$("car").addEventListener("click", e=>{ if(e.target===$("car")) $("car").close(); });
+$("carNome").addEventListener("input", e=>{ try{ localStorage.setItem("dyupNome", e.target.value); }catch(_){} });
+function numPedido(d){ const z=n=>String(n).padStart(2,"0"); return `DY${String(d.getFullYear()).slice(2)}${z(d.getMonth()+1)}${z(d.getDate())}-${z(d.getHours())}${z(d.getMinutes())}`; }
+const b64url = s => btoa(unescape(encodeURIComponent(s))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+function linkPedido(){
+  const agora = new Date();
+  const P = {n:numPedido(agora), d:agora.toISOString(), c:$("carNome").value.trim(),
+    i:car.map(c=>[c.marca,c.modelo,c.cor,c.ref,c.tam,c.q,c.preco])};
+  return {num:P.n, url:new URL("pedido.html", location.href).href.split("#")[0]+"#"+b64url(JSON.stringify(P))};
+}
+function linkZap(){
+  if(!car.length) return `https://wa.me/${ZAP}`;
+  const {num, url} = linkPedido();
+  const tot = car.reduce((s,c)=>s+c.q*c.preco,0), pecas = car.reduce((s,c)=>s+c.q,0);
+  const nome = $("carNome").value.trim();
+  const t = `Olá, DYUP! Quero fazer o pedido Nº ${num} (${pecas} ${pecas>1?"pares":"par"}, total ${brl(tot)}).${nome?` Meu nome é ${nome}.`:""}\n\nPedido completo: ${url}`;
+  return `https://wa.me/${ZAP}?text=${encodeURIComponent(t)}`;
+}
+$("carNome").addEventListener("input", ()=>{ $("carZap").href = linkZap(); });
+$("carZap").addEventListener("click", e=>{ if(!car.length){ e.preventDefault(); return; } $("carZap").href = linkZap(); });
+pintaCar();
+render();
+</script>
