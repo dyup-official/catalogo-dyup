@@ -90,7 +90,7 @@ if(!P){
       <div class="va"><span class="tm">Tam. ${esc(c.tam)}</span> × ${c.q}<br>${brl(c.preco)} un.<b>${brl(c.preco*c.q)}</b></div></li>`).join("")}</ul>
     <div class="tot"><span class="rf" style="color:inherit">Total</span><b>${brl(tot)}</b></div>
     <div class="pag"><h2>Formas de pagamento</h2>
-      <p><b>Cartão de crédito</b> em até 10x, parcela mínima de R$ 100,00<br><small>${parc>1?`Neste pedido: até ${parc}x de ${brl(tot/parc)}`:"Neste pedido: 1x no crédito"}</small></p>
+      <p><b>Cartão de crédito</b> ${parc>1?`em até ${parc}x de ${brl(tot/parc)}`:"à vista no crédito"}</p>
       <p><b>Cartão de débito</b></p><p><b>PIX</b></p></div>
     <div class="acoes"><button class="bt p" type="button" id="pdf">Baixar PDF do pedido</button><a class="bt s" href="./">Ver o catálogo</a></div>
     <p class="obs">Pedido sujeito à confirmação de estoque. Preços sujeitos a alteração. Os valores vêm do link enviado pelo cliente, então confira com o catálogo antes de fechar.</p>`;
@@ -120,8 +120,7 @@ function gerarPdf(P, fotos, LOGO){
   doc.setFillColor(...CARB); doc.rect(0,0,W,42,"F");
   if(LOGO) doc.addImage(LOGO,"PNG",M,11,44,44*349/1200);
   doc.setTextColor(200,202,204); doc.setFont("helvetica","normal"); doc.setFontSize(9);
-  doc.text("LOJA DE CORRIDA E TÊNIS", M, 31);
-  doc.text(LOJA.end+"   ·   WhatsApp "+LOJA.zap, M, 36);
+  doc.text(LOJA.end+"   ·   WhatsApp "+LOJA.zap, M, 33);
   doc.setTextColor(...VOLT); doc.setFont("helvetica","bold"); doc.setFontSize(18);
   doc.text("PEDIDO", W-M, 18, {align:"right"});
   doc.setTextColor(248,247,242); doc.setFont("helvetica","normal"); doc.setFontSize(9.5);
@@ -168,12 +167,11 @@ function gerarPdf(P, fotos, LOGO){
   doc.setFont("helvetica","bold"); doc.setFontSize(15); doc.text(brl(tot), W-M-4, y+9.5, {align:"right"});
   // formas de pagamento
   const parc = Math.max(1, Math.min(10, Math.floor(tot/100)));
-  doc.setDrawColor(...CARB); doc.setLineWidth(.3); doc.roundedRect(M, y, 96, 46, 2, 2, "S");
+  doc.setDrawColor(...CARB); doc.setLineWidth(.3); doc.roundedRect(M, y, 96, 40, 2, 2, "S");
   doc.setFont("helvetica","bold"); doc.setFontSize(10); doc.text("FORMAS DE PAGAMENTO", M+5, y+7);
   doc.setFont("helvetica","normal"); doc.setFontSize(9.5);
   const fp = [
-    ["Cartão de crédito", "Em até 10x, parcela mínima de R$ 100,00"],
-    ["", parc>1 ? `Neste pedido: até ${parc}x de ${brl(tot/parc)}` : "Neste pedido: 1x no crédito"],
+    ["Cartão de crédito", parc>1 ? `Em até ${parc}x de ${brl(tot/parc)}` : "À vista no crédito"],
     ["Cartão de débito", ""],
     ["PIX", ""],
   ];
