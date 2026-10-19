@@ -49,7 +49,8 @@ MOD=[ # (marca, prefixo na descrição, nome, categoria)
 ("NEW BALANCE","FRESH FOAM X 1080 V14","Fresh Foam X 1080 v14","Corrida"),
 ("NEW BALANCE","FRESH FOAM X MORE V6","Fresh Foam X More v6","Corrida"),
 ]
-EXC=set(l.strip() for l in open(os.environ.get('EXCLUIR','/mnt/project-files/catalogo/excluir.txt')) if l.strip() and not l.startswith('#'))
+AQUI=os.path.dirname(os.path.abspath(__file__))
+EXC=set(l.strip() for l in open(os.environ.get('EXCLUIR',os.path.join(AQUI,'excluir.txt'))) if l.strip() and not l.startswith('#'))
 def emb(f,ref):  # foto leve para o site: 640 px, JPEG 82, em fotos/REF.jpg
   from PIL import Image
   dst=os.path.join(SITE,'fotos',ref+'.jpg')
@@ -81,8 +82,11 @@ for it in itens.values():
   it['tam']=dict(sorted(it['tam'].items(),key=lambda kv:float(kv[0].replace(',','.'))))
   it['pares']=sum(it['tam'].values())
   it['hc']=HC.get(it['modelo'],([],''))[0]
+  # fotos padronizadas do projeto, se existirem; senão usa as que já estão publicadas no site
   FOT=os.environ.get('FOTOS','/mnt/project-files/catalogo/fotos-padrao')
-  it['foto']=next((emb(os.path.join(FOT,r+'.jpg'),r) for r in it['refs'] if os.path.exists(os.path.join(FOT,r+'.jpg'))),'')
+  it['foto']=next((emb(os.path.join(FOT,r+'.jpg'),r) for r in it['refs'] if os.path.exists(os.path.join(FOT,r+'.jpg'))),'') \
+    or next(('fotos/'+r+'.jpg' for r in it['refs'] if os.path.exists(os.path.join(SITE,'fotos',r+'.jpg'))),'')
+  if not it['foto']: print('SEM FOTO:',it['marca'],it['modelo'],it['cor'],it['refs'],file=sys.stderr)
   if it['cat']=='Corrida' and not it['hc'] and it['modelo'] not in ('Speedgoat 7',): print('SEM HC:',it['modelo'],file=sys.stderr)
   it['tam']=list(it['tam'])  # sem quantidade: o catálogo vai para clientes
   it.pop('pares')
@@ -91,10 +95,10 @@ L.sort(key=lambda i:(i['marca'],i['modelo'],i['cor']))
 for f in ('logo-volt.png','logo-carbono.png','circuito.png'): shutil.copy(os.path.join(A,f),os.path.join(SITE,'img',f))
 from PIL import Image
 ic=Image.new('RGB',(192,192),(16,24,32)); lg=Image.open(os.path.join(A,'logo-volt.png')).convert('RGBA'); lg.thumbnail((160,160)); ic.paste(lg,((192-lg.width)//2,(192-lg.height)//2),lg); ic.save(os.path.join(SITE,'img','icone.png'))
-html=open('template.html').read()
+html=open(os.path.join(AQUI,'template.html')).read()
 html=html.replace('__DADOS__',json.dumps(L,ensure_ascii=False)).replace('__SALDO__',DATA_SALDO).replace('__HCNOMES__',json.dumps(NOMES,ensure_ascii=False))
 html='<!doctype html>\n<html lang="pt-BR">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'+html+'\n</html>\n'
 open(os.path.join(SITE,'index.html'),'w').write(html)
-shutil.copy('pedido.html',os.path.join(SITE,'pedido.html'))
+shutil.copy(os.path.join(AQUI,'pedido.html'),os.path.join(SITE,'pedido.html'))
 open(os.path.join(SITE,'.nojekyll'),'w').close()
 print(len(L),"itens")
