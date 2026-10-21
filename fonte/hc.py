@@ -2,6 +2,7 @@
 HC = {  # modelo: (códigos, observação)
  "Gel-Nimbus 27 TR":(["A1"],""), "Gel-Nimbus 27 Luxe":(["A1"],""), "Gel-Nimbus 28":(["A1"],""),
  "Vomero 18":(["A1"],""), "Vomero Plus":(["A1"],""),
+ "Air Winflo 12":(["A2"],""),
  "1080 v15":(["A1"],""), "Fresh Foam X 1080 v14":(["A1"],""), "Fresh Foam X More v6":(["A1"],"Encaixe inferido pela Dyup: máximo amortecimento"),
  "Gel-Cumulus 28":(["A2"],""), "Novablast 6":(["A2","B1"],"A HC cita o Novablast em A2 e B1"),
  "Clifton 10":(["A2"],""), "Clifton Pro":(["A2"],"Encaixe inferido (linha Clifton); confirmar"),
