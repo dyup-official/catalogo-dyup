@@ -49,6 +49,12 @@ header.marca .circ{position:absolute;right:-40px;top:-30px;height:220px;opacity:
 .barra span{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .barra select{flex:1 1 280px;max-width:460px;font:600 13.5px var(--sans);background:var(--card);border:1px solid var(--line);cursor:pointer}
 .barra select:hover{border-color:var(--fg)}
+.aval{margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:12px 20px;flex-wrap:wrap;background:var(--chip);border-left:4px solid var(--volt);border-radius:8px;padding:14px 16px}
+.aval b{display:block;font-size:15px;line-height:1.25}
+.aval small{display:block;margin-top:3px;font-size:13px;color:var(--muted)}
+.aval a{flex:none;display:inline-flex;align-items:center;gap:8px;background:var(--carbono);color:var(--volt);text-decoration:none;border-radius:8px;padding:11px 14px;font:600 12px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase}
+.aval a:hover,.aval a:focus-visible{background:var(--volt);color:var(--carbono);outline:none}
+@media (max-width:520px){.aval a{width:100%;justify-content:center}}
 .guia .desc{margin:8px 0 0;font-size:13px;color:var(--muted)}
 .tams button{all:unset;box-sizing:border-box;cursor:pointer;font:500 12.5px/1 var(--mono);font-variant-numeric:tabular-nums;padding:8px 9px;border-radius:4px;background:var(--chip);color:var(--fg)}
 .tams button.on{box-shadow:inset 0 0 0 1.5px var(--fg)}
@@ -162,6 +168,10 @@ footer .wrap{padding-block:18px;font-family:var(--mono);font-size:11px;letter-sp
     <label class="barra" for="opcoes"><span id="guiaT">Qual tênis é pra mim?</span>
       <select id="opcoes"><option value="">Escolha o seu esporte ou o seu tipo de corrida</option></select></label>
     <p class="desc" id="guiaD" hidden></p>
+    <div class="aval">
+      <div><b>Ainda na dúvida sobre qual tênis comprar?</b><small>Faça uma avaliação especializada com a HC Clínica Esportiva.</small></div>
+      <a href="https://hcclinicaesportiva.com/lp/qual-tenis/" target="_blank" rel="noopener">Fazer avaliação <span aria-hidden="true">→</span></a>
+    </div>
   </div>
 </section>
 
