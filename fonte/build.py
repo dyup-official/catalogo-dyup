@@ -38,6 +38,7 @@ MOD=[ # (marca, prefixo na descrição, nome, categoria)
 ("NIKE","COURT LITE 4 CLY","Court Lite 4 Clay","Quadra"),
 ("NIKE","VOMERO 18","Vomero 18","Corrida"),
 ("NIKE","VOMERO PLUS","Vomero Plus","Corrida"),
+("NIKE","AIR WINFLO 12","Air Winflo 12","Corrida"),
 ("NEW BALANCE","INFINION 1080 V15","1080 v15","Corrida"),
 ("NEW BALANCE","1080 V15 INFINION","1080 v15","Corrida"),
 ("NEW BALANCE","INFINION SUPERCOMP REBEL","SuperComp Rebel","Corrida"),
