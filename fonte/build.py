@@ -91,6 +91,13 @@ for it in itens.values():
   it['tam']=list(it['tam'])  # sem quantidade: o catálogo vai para clientes
   it.pop('pares')
   L.append(it)
+# data em que cada referência apareceu pela primeira vez no estoque (para ordenar por "Mais novos")
+ENT_F=os.path.join(AQUI,'entrada.json'); ENT=json.load(open(ENT_F)) if os.path.exists(ENT_F) else {}
+d,m,a=DATA_SALDO.split('/'); HOJE=f'{a}-{m}-{d}'
+for it in L:
+  for r in it['refs']: ENT.setdefault(r,HOJE)
+  it['ent']=min(ENT[r] for r in it['refs'])
+json.dump(dict(sorted(ENT.items())),open(ENT_F,'w'),indent=0,ensure_ascii=False)
 L.sort(key=lambda i:(i['marca'],i['modelo'],i['cor']))
 for f in ('logo-volt.png','logo-carbono.png','circuito.png'): shutil.copy(os.path.join(A,f),os.path.join(SITE,'img',f))
 from PIL import Image

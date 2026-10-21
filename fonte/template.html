@@ -177,6 +177,7 @@ footer .wrap{padding-block:18px;font-family:var(--mono);font-size:11px;letter-sp
     <div class="linha">
       <label class="campo" for="fTam"><span class="rf">Tamanho</span><select id="fTam"><option value="">Todos</option></select></label>
       <label class="campo" for="fOrd"><span class="rf">Ordenar por</span><select id="fOrd">
+        <option value="novos">Mais novos</option>
         <option value="marca">Marca e modelo</option>
         <option value="menor">Menor preço</option>
         <option value="maior">Maior preço</option>
@@ -216,7 +217,7 @@ const CIRC = "img/circuito.png";
 const brl = v => "R$ " + v.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d),)/g, ".");
 const tc = s => s.toLowerCase().replace(/(^|[\s/-])(\p{L})/gu, (m,a,b)=>a+b.toUpperCase());
 const HCN = __HCNOMES__;
-const st = {marca:"", cat:"", hc:"", tam:"", ord:"marca", q:""};
+const st = {marca:"", cat:"", hc:"", tam:"", ord:"novos", q:""};
 const $ = id => document.getElementById(id);
 
 function chips(el, valores, chave, rotuloTodos){
@@ -244,7 +245,8 @@ function render(){
   let L = ITENS.filter(i =>
     (!st.marca || i.marca===st.marca) && (!st.cat || i.cat===st.cat) && (!st.hc || i.hc.includes(st.hc)) && (!st.tam || i.tam.includes(st.tam)) &&
     (!st.q || [i.marca,i.modelo,i.cor,...i.refs].join(" ").toLowerCase().includes(st.q)));
-  if(st.ord==="menor") L.sort((a,b)=>a.preco-b.preco);
+  if(st.ord==="novos") L.sort((a,b)=>b.ent.localeCompare(a.ent));  // estável: empates seguem marca e modelo
+  else if(st.ord==="menor") L.sort((a,b)=>a.preco-b.preco);
   else if(st.ord==="maior") L.sort((a,b)=>b.preco-a.preco);
   $("cont").textContent = L.length ? `${L.length} ${L.length>1?"opções":"opção"}` : "";
   $("grade").innerHTML = L.length ? L.map(i => `
