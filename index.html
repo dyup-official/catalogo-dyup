@@ -180,7 +180,6 @@ footer .wrap{padding-block:18px;font-family:var(--mono);font-size:11px;letter-sp
     <div class="campo"><span class="rf">Marca</span><div class="grupo" id="fMarca"></div></div>
     <div class="campo"><span class="rf">Categoria</span><div class="grupo" id="fCat"></div></div>
     <div class="linha">
-      <label class="campo" for="fHc"><span class="rf">Tipo de corrida</span><select id="fHc"><option value="">Todos</option></select></label>
       <label class="campo" for="fTam"><span class="rf">Tamanho</span><select id="fTam"><option value="">Todos</option></select></label>
       <label class="campo" for="fOrd"><span class="rf">Ordenar por</span><select id="fOrd">
         <option value="marca">Marca e modelo</option>
@@ -242,8 +241,6 @@ chips($("fMarca"), uniq(ITENS.map(i=>i.marca)).sort(), "marca", "Todas");
 chips($("fCat"), ["Corrida","Trail","Quadra","Treino","Casual","Infantil"].filter(c=>ITENS.some(i=>i.cat===c)), "cat", "Todos");
 const tams = uniq(ITENS.flatMap(i=>i.tam)).sort((a,b)=>parseFloat(a)-parseFloat(b));
 $("fTam").insertAdjacentHTML("beforeend", tams.map(t=>`<option value="${t}">${t}</option>`).join(""));
-$("fHc").insertAdjacentHTML("beforeend", Object.keys(HCN).filter(k=>ITENS.some(i=>i.hc.includes(k))).map(k=>`<option value="${k}">${HCN[k]}</option>`).join(""));
-$("fHc").addEventListener("change", e=>{st.hc=e.target.value;pintaOpc();render()});
 $("fTam").addEventListener("change", e=>{st.tam=e.target.value;render()});
 $("fOrd").addEventListener("change", e=>{st.ord=e.target.value;render()});
 $("fBusca").addEventListener("input", e=>{st.q=e.target.value.trim().toLowerCase();render()});
@@ -305,7 +302,7 @@ $("opcoes").addEventListener("change", e=>{
   const k = e.target.value;
   if(k==="Q"){ st.hc=""; st.cat="Quadra"; }
   else { st.hc=k; if(st.cat==="Quadra") st.cat=""; }
-  $("fHc").value = st.hc; pintaCat(); pintaOpc(); render();
+  pintaCat(); pintaOpc(); render();
   if(k) $("cont").scrollIntoView({behavior:"smooth", block:"start"});
 });
 
