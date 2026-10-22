@@ -245,7 +245,12 @@ function render(){
   let L = ITENS.filter(i =>
     (!st.marca || i.marca===st.marca) && (!st.cat || i.cat===st.cat) && (!st.hc || i.hc.includes(st.hc)) && (!st.tam || i.tam.includes(st.tam)) &&
     (!st.q || [i.marca,i.modelo,i.cor,...i.refs].join(" ").toLowerCase().includes(st.q)));
-  if(st.ord==="novos") L.sort((a,b)=>b.ent.localeCompare(a.ent));  // estável: empates seguem marca e modelo
+  if(st.ord==="novos"){
+    // corrida primeiro; dentro de cada grupo, a marca com entrada mais recente vem antes, e na marca os mais novos primeiro
+    const grupo=p=>p.cat==="Corrida"?0:1, ult={};
+    L.forEach(p=>{const k=grupo(p)+"|"+p.marca; if(!ult[k]||p.ent>ult[k]) ult[k]=p.ent});
+    L.sort((a,b)=>grupo(a)-grupo(b) || ult[grupo(b)+"|"+b.marca].localeCompare(ult[grupo(a)+"|"+a.marca]) || (a.marca===b.marca?0:(a.marca<b.marca?-1:1)) || b.ent.localeCompare(a.ent));
+  }
   else if(st.ord==="menor") L.sort((a,b)=>a.preco-b.preco);
   else if(st.ord==="maior") L.sort((a,b)=>b.preco-a.preco);
   $("cont").textContent = L.length ? `${L.length} ${L.length>1?"opções":"opção"}` : "";
