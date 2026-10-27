@@ -43,10 +43,15 @@ for f in sorted(os.listdir(src)):
     from rembg import new_session, remove
     ses=new_session('isnet-general-use')
   cut=remove(im,session=ses)
-  a=cut.split()[-1].point(lambda p:0 if p<20 else p); cut.putalpha(a)
+  tenis=gr=='Tênis'
+  a=cut.split()[-1]
+  if tenis: a=a.point(lambda p:0 if p<20 else p)
+  else:  # roupa clara em fundo cinza deixa halo: borda firme, recuada 2px e suavizada
+    a=a.point(lambda p:0 if p<160 else 255).filter(ImageFilter.MinFilter(5 if im.width>=1000 else 3)).filter(ImageFilter.GaussianBlur(1.2))
+    cut=im.copy()
+  cut.putalpha(a)
   if not a.getbbox(): res["falha"].append(f"{f}: não achei o produto na foto"); continue
   cut=cut.crop(a.getbbox())
-  tenis=gr=='Tênis'
   if tenis and (ref in flip or (ref not in noflip and virado(cut))): cut=cut.transpose(Image.FLIP_LEFT_RIGHT)
   if tenis: k=min(S*0.90/cut.width, S*0.55/cut.height)
   else: k=min(S*0.80/cut.width, S*0.80/cut.height)
