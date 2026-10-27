@@ -51,7 +51,8 @@ MOD=[ # (marca, prefixo na descrição, nome, categoria)
 ("NEW BALANCE","FRESH FOAM X MORE V6","Fresh Foam X More v6","Corrida"),
 ]
 AQUI=os.path.dirname(os.path.abspath(__file__))
-EXC=set(l.strip() for l in open(os.environ.get('EXCLUIR',os.path.join(AQUI,'excluir.txt'))) if l.strip() and not l.startswith('#'))
+EXC=set(l.strip() for f in (os.environ.get('EXCLUIR',os.path.join(AQUI,'excluir.txt')),os.path.join(AQUI,'excluir-revisao.txt')) if os.path.exists(f)
+        for l in open(f) if l.strip() and not l.startswith('#'))  # excluir.txt fixo + o que a planilha de revisão marcou
 def emb(f,ref):  # foto leve para o site: 640 px, JPEG 82, em fotos/REF.jpg
   from PIL import Image
   dst=os.path.join(SITE,'fotos',ref+'.jpg')
