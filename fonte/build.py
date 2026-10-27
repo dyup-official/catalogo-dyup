@@ -59,8 +59,17 @@ def emb(f,ref):  # foto leve para o site: 640 px, JPEG 82, em fotos/REF.jpg
     im=Image.open(f).convert('RGB'); im.thumbnail((640,640)); im.save(dst,'JPEG',quality=82,optimize=True)
   return 'fotos/'+ref+'.jpg'
 itens={};falhas=[]
+MARCAS=['NEW BALANCE','ASICS','HOKA','NIKE','ADIDAS','MIZUNO','OLYMPIKUS','WILSON','HEAD','BABOLAT','YONEX','UNDER ARMOUR','PUMA','FILA','DYUP']
 for g in raw:
   if g['ref'] in EXC: continue
+  gr=g.get('grupo','Tênis')
+  if gr!='Tênis':
+    # roupas e acessórios: marca conhecida no começo da descrição, o resto vira o nome
+    d=g['desc']; marca=next((m for m in MARCAS if d.startswith(m+' ')),'')
+    nome=d[len(marca):].strip(' -') or d
+    it=itens.setdefault((gr,g['ref']),{"grupo":gr,"marca":marca,"modelo":nome.title(),"cat":gr,"cor":"","refs":[g['ref']],"preco":g['preco'],"tam":{}})
+    for t,q in g['tam'].items(): it['tam'][t]=it['tam'].get(t,0)+q
+    continue
   d=g['desc']
   if d.startswith('NB '): d='NEW BALANCE '+d[3:]
   marca=next(m for m in ['NEW BALANCE','ASICS','HOKA','NIKE'] if d.startswith(m))
@@ -73,14 +82,18 @@ for g in raw:
   cor=re.sub(r'\s*/\s*',' / ',cor).replace('ESCU RO','ESCURO')
   # HOKA Cielo vem com uma referência por tamanho: junta no mesmo item
   ref=g['ref']; key=(marca,hit[1],cor,g['preco'])
-  it=itens.setdefault(key,{"marca":marca,"modelo":hit[1],"cat":hit[2],"cor":cor or "",
+  it=itens.setdefault(key,{"grupo":"Tênis","marca":marca,"modelo":hit[1],"cat":hit[2],"cor":cor or "",
      "refs":[], "preco":g['preco'],"tam":{}})
   it['refs'].append(ref)
   for t,q in g['tam'].items(): it['tam'][t]=it['tam'].get(t,0)+q
 if falhas: print("SEM MODELO:",falhas,file=sys.stderr); sys.exit(1)
 L=[]
 for it in itens.values():
-  it['tam']=dict(sorted(it['tam'].items(),key=lambda kv:float(kv[0].replace(',','.'))))
+  ORD_L=['PP','P','M','G','GG','XG','XGG','EG','EGG','EXG','Único']
+  def ordt(t):
+    m=re.match(r'\d+(?:[.,]\d+)?',t)
+    return (0,float(m.group().replace(',','.')),t) if m else (1,ORD_L.index(t) if t in ORD_L else 99,t)
+  it['tam']=dict(sorted(it['tam'].items(),key=lambda kv:ordt(kv[0])))
   it['pares']=sum(it['tam'].values())
   it['hc']=HC.get(it['modelo'],([],''))[0]
   # fotos padronizadas do projeto, se existirem; senão usa as que já estão publicadas no site
@@ -99,7 +112,7 @@ for it in L:
   for r in it['refs']: ENT.setdefault(r,HOJE)
   it['ent']=min(ENT[r] for r in it['refs'])
 json.dump(dict(sorted(ENT.items())),open(ENT_F,'w'),indent=0,ensure_ascii=False)
-L.sort(key=lambda i:(i['marca'],i['modelo'],i['cor']))
+L.sort(key=lambda i:(i['grupo']!='Tênis',i['grupo'],i['marca'],i['modelo'],i['cor']))
 for f in ('logo-volt.png','logo-carbono.png','circuito.png'): shutil.copy(os.path.join(A,f),os.path.join(SITE,'img',f))
 from PIL import Image
 ic=Image.new('RGB',(192,192),(16,24,32)); lg=Image.open(os.path.join(A,'logo-volt.png')).convert('RGBA'); lg.thumbnail((160,160)); ic.paste(lg,((192-lg.width)//2,(192-lg.height)//2),lg); ic.save(os.path.join(SITE,'img','icone.png'))
