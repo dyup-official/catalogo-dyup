@@ -59,15 +59,27 @@ def emb(f,ref):  # foto leve para o site: 640 px, JPEG 82, em fotos/REF.jpg
     im=Image.open(f).convert('RGB'); im.thumbnail((640,640)); im.save(dst,'JPEG',quality=82,optimize=True)
   return 'fotos/'+ref+'.jpg'
 itens={};falhas=[]
-MARCAS=['NEW BALANCE','ASICS','HOKA','NIKE','ADIDAS','MIZUNO','OLYMPIKUS','WILSON','HEAD','BABOLAT','YONEX','UNDER ARMOUR','PUMA','FILA','DYUP']
+MARCAS=['NEW BALANCE','ASICS','HOKA','NIKE','ADIDAS','MIZUNO','OLYMPIKUS','WILSON','HEAD','BABOLAT','YONEX','UNDER ARMOUR','PUMA','FILA','DYUP',
+  'LACOSTE','COMPRESSPORT','LURK','LIVE','SODERLING']
+APELIDO={'NB':'NEW BALANCE','NIKÉ':'NIKE','COMPRESS':'COMPRESSPORT'}
+def titulo(s):  # Title Case, mas códigos com número (3PR, 5IN, V4) ficam como estão
+  return ' '.join(w if any(c.isdigit() for c in w) else w.capitalize() for w in s.split())
 for g in raw:
   if g['ref'] in EXC: continue
   gr=g.get('grupo','Tênis')
   if gr!='Tênis':
-    # roupas e acessórios: marca conhecida no começo da descrição, o resto vira o nome
-    d=g['desc']; marca=next((m for m in MARCAS if d.startswith(m+' ')),'')
-    nome=d[len(marca):].strip(' -') or d
-    it=itens.setdefault((gr,g['ref']),{"grupo":gr,"marca":marca,"modelo":nome.title(),"cat":gr,"cor":"","refs":[g['ref']],"preco":g['preco'],"tam":{}})
+    # roupas e acessórios: a marca aparece na descrição (às vezes depois de POLO ou DE ...), o resto vira o nome
+    pal=[APELIDO.get(w,w) for w in g['desc'].split()]
+    d=' '.join(pal); marca=''
+    for m in MARCAS:
+      i=(' '+d+' ').find(' '+m+' ')
+      if i>=0: marca=m; d=(d[:i]+d[i+len(m):]).strip(); break
+    d=d.replace(' NEW BALANCE ',' ').strip(' -.')
+    if d.startswith('DE '): d=d[3:]
+    if d.startswith('FEM. '): d='FEM '+d[5:]
+    nome=titulo(d) or gr
+    it=itens.setdefault((gr,marca,nome,g['preco']),{"grupo":gr,"marca":marca,"modelo":nome,"cat":gr,"cor":"","refs":[],"preco":g['preco'],"tam":{}})
+    if g['ref'] and g['ref'] not in it['refs']: it['refs'].append(g['ref'])
     for t,q in g['tam'].items(): it['tam'][t]=it['tam'].get(t,0)+q
     continue
   d=g['desc']
@@ -89,7 +101,7 @@ for g in raw:
 if falhas: print("SEM MODELO:",falhas,file=sys.stderr); sys.exit(1)
 L=[]
 for it in itens.values():
-  ORD_L=['PP','P','M','G','GG','XG','XGG','EG','EGG','EXG','Único']
+  ORD_L=['PP','P','P/M','M','M/G','G','G/GG','GG','XG','XGG','EG','EGG','EXG','T2','T3','T4','Único']
   def ordt(t):
     m=re.match(r'\d+(?:[.,]\d+)?',t)
     return (0,float(m.group().replace(',','.')),t) if m else (1,ORD_L.index(t) if t in ORD_L else 99,t)
@@ -110,7 +122,7 @@ ENT_F=os.path.join(AQUI,'entrada.json'); ENT=json.load(open(ENT_F)) if os.path.e
 d,m,a=DATA_SALDO.split('/'); HOJE=f'{a}-{m}-{d}'
 for it in L:
   for r in it['refs']: ENT.setdefault(r,HOJE)
-  it['ent']=min(ENT[r] for r in it['refs'])
+  it['ent']=min((ENT[r] for r in it['refs']),default=HOJE)
 json.dump(dict(sorted(ENT.items())),open(ENT_F,'w'),indent=0,ensure_ascii=False)
 L.sort(key=lambda i:(i['grupo']!='Tênis',i['grupo'],i['marca'],i['modelo'],i['cor']))
 for f in ('logo-volt.png','logo-carbono.png','circuito.png'): shutil.copy(os.path.join(A,f),os.path.join(SITE,'img',f))
