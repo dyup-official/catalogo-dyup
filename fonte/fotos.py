@@ -33,7 +33,7 @@ def sombra(x,yb,w,forte):
 ses=None; res={"ok":[],"sem_ref":[],"falha":[]}
 for f in sorted(os.listdir(src)):
   nome,ext=os.path.splitext(f)
-  if f.upper().startswith('LEIA-ME') or ext.lower() not in ('.jpg','.jpeg','.png','.webp','.avif','.heic','.bmp','.tif','.tiff'): continue
+  if f.upper().startswith('LEIA-ME') or ext.lower() not in ('.jpg','.jpeg','.jfif','.png','.webp','.avif','.heic','.bmp','.tif','.tiff'): continue
   m=re.match(r'^(.*?)(?:_(\d+))?$',nome.strip()); base,n=m.group(1).strip(),m.group(2)
   if base.upper() not in GR: res["sem_ref"].append(f); continue
   ref,gr=GR[base.upper()]
@@ -45,7 +45,19 @@ for f in sorted(os.listdir(src)):
   cut=remove(im,session=ses)
   tenis=gr=='Tênis'
   a=cut.split()[-1]
-  if tenis: a=a.point(lambda p:0 if p<20 else p)
+  if tenis:
+    a=a.point(lambda p:0 if p<20 else p)
+    # sola branca em fundo branco: o recorte fura a entressola; em cada coluna, o que fica entre o topo e a sola é tênis
+    px=a.load(); w,h=a.size
+    lim=[]
+    for x in range(w):
+      ys=[y for y in range(h) if px[x,y]>=128]; lim.append((ys[0],ys[-1]) if ys else None)
+    for x in range(w):  # mediana dos vizinhos: uma coluna mal recortada não deixa risco
+      viz=[l for l in lim[max(0,x-12):x+13] if l]
+      if len(viz)>=13 and lim[max(0,x-12)] and lim[min(w-1,x+12)]:
+        t=sorted(l[0] for l in viz)[len(viz)//2]; b=sorted(l[1] for l in viz)[len(viz)//2]
+        for y in range(max(t,lim[x][0]) if lim[x] else t,b+1): px[x,y]=255
+    cut=im.copy()
   else:  # roupa clara em fundo cinza deixa halo: borda firme, recuada 2px e suavizada
     a=a.point(lambda p:0 if p<160 else 255).filter(ImageFilter.MinFilter(5 if im.width>=1000 else 3)).filter(ImageFilter.GaussianBlur(1.2))
     cut=im.copy()
