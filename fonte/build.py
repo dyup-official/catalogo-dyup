@@ -1,7 +1,7 @@
 import json,base64,re,sys,glob,os,shutil
 # Gera o site do catálogo (GitHub Pages) na pasta SITE: index.html, pedido.html, fotos/ e img/
 SITE=os.environ.get('SITE','site')
-os.makedirs(os.path.join(SITE,'fotos'),exist_ok=True); os.makedirs(os.path.join(SITE,'img'),exist_ok=True)
+os.makedirs(os.path.join(SITE,'fotos','grande'),exist_ok=True); os.makedirs(os.path.join(SITE,'img'),exist_ok=True)
 from hc import HC,NOMES
 A=os.path.dirname(glob.glob('/root/.claude/skills/**/dyup-posts/assets/logo-volt.png',recursive=True)[0])
 raw=json.load(open('raw.json'))
@@ -58,6 +58,9 @@ def emb(f,ref):  # foto leve para o site: 640 px, JPEG 82, em fotos/REF.jpg
   dst=os.path.join(SITE,'fotos',ref+'.jpg')
   if not os.path.exists(dst) or os.path.getmtime(dst)<os.path.getmtime(f):
     im=Image.open(f).convert('RGB'); im.thumbnail((640,640)); im.save(dst,'JPEG',quality=82,optimize=True)
+  g=os.path.join(SITE,'fotos','grande',ref+'.jpg')  # foto grande para a janela de ampliar: 1000 px
+  if not os.path.exists(g) or os.path.getmtime(g)<os.path.getmtime(f):
+    im=Image.open(f).convert('RGB'); im.thumbnail((1000,1000)); im.save(g,'JPEG',quality=85,optimize=True)
   return 'fotos/'+ref+'.jpg'
 itens={};falhas=[]
 MARCAS=['NEW BALANCE','ASICS','HOKA','NIKE','ADIDAS','MIZUNO','OLYMPIKUS','WILSON','HEAD','BABOLAT','YONEX','UNDER ARMOUR','PUMA','FILA','DYUP',
@@ -113,6 +116,7 @@ for it in itens.values():
   FOT=os.environ.get('FOTOS','/mnt/project-files/catalogo/fotos-padrao')
   it['foto']=next((emb(os.path.join(FOT,r+'.jpg'),r) for r in it['refs'] if os.path.exists(os.path.join(FOT,r+'.jpg'))),'') \
     or next(('fotos/'+r+'.jpg' for r in it['refs'] if os.path.exists(os.path.join(SITE,'fotos',r+'.jpg'))),'')
+  it['zoom']=(lambda g: g if os.path.exists(os.path.join(SITE,g)) else it['foto'])(it['foto'].replace('fotos/','fotos/grande/')) if it['foto'] else ''
   if not it['foto']: print('SEM FOTO:',it['marca'],it['modelo'],it['cor'],it['refs'],file=sys.stderr)
   if it['cat']=='Corrida' and not it['hc'] and it['modelo'] not in ('Speedgoat 7',): print('SEM HC:',it['modelo'],file=sys.stderr)
   it['tam']=list(it['tam'])  # sem quantidade: o catálogo vai para clientes

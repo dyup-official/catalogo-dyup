@@ -158,6 +158,25 @@ footer{border-top:1px solid var(--line)}
 footer .wrap{padding-block:18px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
 @media (max-width:520px){header.marca img.logo{height:36px}}
 @media (max-width:760px){.filtros{position:static}#cont{scroll-margin-top:12px}.barra{gap:6px}.barra select{flex-basis:100%;max-width:none}}
+
+/* Janela da foto ampliada: toca na foto e abre por cima do catálogo */
+.foto[data-zoom]{cursor:zoom-in}
+.foto[data-zoom]:focus-visible{outline:2px solid var(--volt);outline-offset:-2px}
+.lupa{position:absolute;right:12px;bottom:12px;z-index:1;width:34px;height:34px;border-radius:999px;background:var(--carbono);display:grid;place-items:center;opacity:0;transition:opacity .15s}
+.lupa svg{width:17px;height:17px;fill:none;stroke:var(--volt);stroke-width:2.2;stroke-linecap:round}
+@media (hover:hover){.foto[data-zoom]:hover .lupa{opacity:1}}
+.foto[data-zoom]:focus-visible .lupa{opacity:1}
+dialog.zoom{border:0;padding:0;width:min(760px,calc(100% - 24px));max-height:calc(100% - 24px);border-radius:10px;overflow:hidden;background:var(--card);color:var(--fg)}
+dialog.zoom::backdrop{background:rgba(16,24,32,.78)}
+dialog.zoom[open]{animation:zin .18s ease-out}
+@keyframes zin{from{opacity:0;transform:scale(.97)}}
+.zoom .ft{position:relative;background:#fff;aspect-ratio:1/1;max-height:calc(100vh - 190px);width:100%}
+.zoom .ft img{width:100%;height:100%;object-fit:contain;display:block}
+.zoom .x{position:absolute;top:10px;right:10px;border:0;width:38px;height:38px;border-radius:999px;background:var(--carbono);color:var(--branco);font-size:20px;line-height:1;cursor:pointer}
+.zoom .x:focus-visible{outline:2px solid var(--volt);outline-offset:2px}
+.zoom .tx{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:14px 16px 16px;border-top:1px solid var(--line)}
+.zoom .tx h3{margin:2px 0 0;font-size:19px;line-height:1.15;letter-spacing:-.015em}
+.zoom .preco{flex:none}
 </style>
 
 <header class="marca">
@@ -227,6 +246,8 @@ footer .wrap{padding-block:18px;font-family:var(--mono);font-size:11px;letter-sp
 <button class="carBtn" id="carBtn" type="button" aria-haspopup="dialog">
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l-1.4 11.2a2 2 0 0 1-2 1.8H8.4a2 2 0 0 1-2-1.8L5 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
   Pedido <span class="n" id="carN">0</span></button>
+<dialog class="zoom" id="zoom" aria-labelledby="zoomT"><div class="ft"><img id="zoomImg" alt=""><button class="x" type="button" id="zoomX" aria-label="Fechar">×</button></div>
+<div class="tx"><div><div class="mk" id="zoomM"></div><h3 id="zoomT"></h3><div class="cor" id="zoomC"></div></div><span class="preco" id="zoomP"></span></div></dialog>
 <dialog class="car" id="car" aria-labelledby="carT"><div class="in">
   <header><h2 id="carT">Seu pedido</h2><button class="x" type="button" id="carX" aria-label="Fechar">×</button></header>
   <ul id="carL"></ul>
@@ -320,10 +341,11 @@ function render(){
   $("cont").textContent = L.length ? `${L.length} ${L.length>1?"opções":"opção"}` : "";
   $("grade").innerHTML = L.length ? L.map(i => `
     <article class="card">
-      <div class="foto${i.foto?" tem":""}">
+      <div class="foto${i.foto?" tem":""}"${i.foto?` data-zoom="${i.id}" role="button" tabindex="0" aria-label="Ver foto maior"`:""}>
         ${i.foto?`<img class="p" src="${i.foto}" alt="${i.marca} ${i.modelo} ${i.cor}" loading="lazy">`:`<img class="c" src="${CIRC}" alt="">`}
         <span class="cat">${i.grupo==="Tênis"?i.cat:i.grupo}</span>
         <span class="ref">REF ${i.refs.join(" · ")}</span>
+        ${i.foto?`<span class="lupa" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>`:""}
       </div>
       <div class="info">
         <div>
@@ -342,6 +364,15 @@ function render(){
     </article>`).join("") : `<div class="vazio">Nenhum produto com esses filtros.</div>`;
 }
 ITENS.forEach((i,n)=>{ i.id = n; });
+function abreZoom(id){ const i=ITENS.find(x=>x.id==id); if(!i||!i.foto) return;
+  $("zoomImg").src=i.zoom||i.foto; $("zoomImg").alt=`${i.marca} ${i.modelo} ${i.cor}`;
+  $("zoomM").textContent=i.marca; $("zoomT").textContent=i.modelo; $("zoomC").textContent=i.cor; $("zoomP").textContent=brl(i.preco);
+  $("zoom").showModal(); }
+$("grade").addEventListener("click", e=>{ const f=e.target.closest("[data-zoom]"); if(f) abreZoom(f.dataset.zoom); });
+$("grade").addEventListener("keydown", e=>{ const f=e.target.closest("[data-zoom]"); if(f&&(e.key==="Enter"||e.key===" ")){ e.preventDefault(); abreZoom(f.dataset.zoom); } });
+$("zoomX").onclick=()=>$("zoom").close();
+$("zoom").addEventListener("click", e=>{ if(e.target===$("zoom")) $("zoom").close(); });
+
 const sel = {};
 ITENS.forEach(i=>{ if(i.tam.length===1) sel[i.id]=i.tam[0]; });
 
