@@ -23,3 +23,10 @@ Passos (só segue se algo for novo; senão termina em silêncio):
 7. Commit (dyup-official) e push; copie os arquivos da fonte alterados para /mnt/project-files/catalogo/; atualize os três json de controle
    (o mtime da revisão é o do arquivo depois de gravado).
 8. Responda em português, em poucas linhas: data do estoque, o que entrou/saiu/mudou, fotos publicadas, pendências.
+
+Andamento na página do botão (https://claude.ai/artifact/1NE66C7ER1rxpLo77TgfyW), só em cliques do botão:
+o documento `status/atual` do banco do artefato (ArtifactData, url do artefato) mostra o estado para o Leonardo.
+- Ao começar: update `{estado:"processando", em:<agora ms>}` (com if_version lido no get).
+- Ao terminar: `{estado:"pronto", em, texto:"<data do estoque e resumo em 1-2 linhas>"}`, ou `estado:"sem_novidade"`,
+  ou `estado:"erro"` com o motivo (ex.: computador da loja não respondeu; planilha aberta).
+- Se o computador estiver fora num clique: grave `erro` com "O computador da loja não respondeu. Tente de novo mais tarde."
