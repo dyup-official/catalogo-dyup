@@ -32,5 +32,5 @@ o documento `status/atual` do banco do artefato (ArtifactData, url do artefato) 
 - Se o computador estiver fora num clique: grave `erro` com "O computador da loja não respondeu. Tente de novo mais tarde."
 
 Resumo na página do botão (só editores veem), em toda rotina que publicar (agendada ou botão):
-`python3 resumo.py "<linx.xls>" ../index.html DD/MM/AAAA > <scratch>/resumo.json` e ArtifactData set em `resumo/atual`
+`python3 resumo.py "<linx.xls>" ../index.html DD/MM/AAAA <ms do push> > <scratch>/resumo.json` e ArtifactData set em `resumo/atual`
 (file_path, com if_version lido no get). Peças e valor vêm do "Total Geral" do Linx (loja inteira, preço de venda).
