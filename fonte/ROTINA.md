@@ -34,3 +34,5 @@ o documento `status/atual` do banco do artefato (ArtifactData, url do artefato) 
 Resumo na página do botão (só editores veem), em toda rotina que publicar (agendada ou botão):
 `python3 resumo.py "<linx.xls>" ../index.html DD/MM/AAAA <ms do push> > <scratch>/resumo.json` e ArtifactData set em `resumo/atual`
 (file_path, com if_version lido no get). Peças e valor vêm do "Total Geral" do Linx (loja inteira, preço de venda).
+
+Gravar no computador: device_commit_files com `stagedPath` (caminho em /mnt/project-files) e `fileUuid: ""`; só fileUuid dá 404.
