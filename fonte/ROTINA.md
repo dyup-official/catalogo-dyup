@@ -35,4 +35,5 @@ Resumo na página do botão (só editores veem), em toda rotina que publicar (ag
 `python3 resumo.py "<linx.xls>" ../index.html DD/MM/AAAA <ms do push> > <scratch>/resumo.json` e ArtifactData set em `resumo/atual`
 (file_path, com if_version lido no get). Peças e valor vêm do "Total Geral" do Linx (loja inteira, preço de venda).
 
+O painel precisa ficar privado (só o dono): público, o db_write recusa (public_audience). Hoje grava-se com mcp__claude-artifacts__db_get/db_write (slug 02f6af4d-e9a5-489b-a81c-ada65c3df71d, ifVersion).
 Gravar no computador: device_commit_files com `stagedPath` (caminho em /mnt/project-files) e `fileUuid: ""`; só fileUuid dá 404.
