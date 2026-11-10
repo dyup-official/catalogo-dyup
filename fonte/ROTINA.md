@@ -37,3 +37,8 @@ Resumo na página do botão (só editores veem), em toda rotina que publicar (ag
 
 O painel precisa ficar privado (só o dono): público, o db_write recusa (public_audience). Hoje grava-se com mcp__claude-artifacts__db_get/db_write (slug 02f6af4d-e9a5-489b-a81c-ada65c3df71d, ifVersion).
 Gravar no computador: device_commit_files com `stagedPath` (caminho em /mnt/project-files) e `fileUuid: ""`; só fileUuid dá 404.
+
+Limpeza no clique do botão (pedido do Leonardo em 10/11/2026), depois de publicar:
+- ESTOQUE LINX: manter só as 2 planilhas .xls mais recentes (por mtime); apagar as outras.
+- FOTOS NOVAS: apagar as fotos já publicadas (as que estão em ultimas-fotos.json e cuja versão tratada está em fotos-padrao). Nunca LEIA-ME.txt.
+- Só apaga se houver ferramenta de apagar no computador (device_bash); sem ela, deixa para o próximo clique.
