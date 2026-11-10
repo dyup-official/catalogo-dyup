@@ -1,6 +1,6 @@
 # Rotina de atualização do catálogo DYUP
 
-Pastas no computador da loja (C:\Users\User\Desktop\Estoque-Catalogo DYUP):
+Pastas no computador da loja (C:\Users\User\Desktop\CLAUDE DYUP\Estoque-Catalogo DYUP):
 - `ESTOQUE LINX\` planilha ExportacaoRegistroInventario*.xls (pega a de maior mtimeMs; olhar também a raiz)
 - `REVISAO DE PRODUTOS.xlsx` planilha de revisão: coluna "Excluir?" tira o produto do site, "Trocar foto?" pede foto nova
 - `FOTOS NOVAS\` fotos com o nome = referência do Linx (REF.jpg, REF_2.png ...)
