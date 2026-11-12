@@ -39,6 +39,6 @@ O painel precisa ficar privado (só o dono): público, o db_write recusa (public
 Gravar no computador: device_commit_files com `stagedPath` (caminho em /mnt/project-files) e `fileUuid: ""`; só fileUuid dá 404.
 
 Limpeza no clique do botão (pedido do Leonardo em 10/11/2026), depois de publicar:
-- ESTOQUE LINX: manter só as 2 planilhas .xls mais recentes (por mtime); apagar as outras.
+- ESTOQUE LINX: manter só a planilha .xls mais recente (por mtime), a que acabou de ser processada; apagar todas as outras (pedido do Leonardo em 12/11/2026).
 - FOTOS NOVAS: apagar as fotos já publicadas (as que estão em ultimas-fotos.json e cuja versão tratada está em fotos-padrao). Nunca LEIA-ME.txt.
 - Só apaga se houver ferramenta de apagar no computador (device_bash); sem ela, deixa para o próximo clique.
