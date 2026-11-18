@@ -49,6 +49,7 @@ MOD=[ # (marca, prefixo na descrição, nome, categoria)
 ("NEW BALANCE","530","530","Casual"),
 ("NEW BALANCE","FRESH FOAM X 1080 V14","Fresh Foam X 1080 v14","Corrida"),
 ("NEW BALANCE","FRESH FOAM X MORE V6","Fresh Foam X More v6","Corrida"),
+("NEW BALANCE","FRESH FOAM ELLIPSE","Fresh Foam Ellipse","Corrida"),
 ]
 AQUI=os.path.dirname(os.path.abspath(__file__))
 EXC=set(l.strip() for f in (os.environ.get('EXCLUIR',os.path.join(AQUI,'excluir.txt')),os.path.join(AQUI,'excluir-revisao.txt')) if os.path.exists(f)
