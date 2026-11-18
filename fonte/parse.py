@@ -4,7 +4,7 @@ t=pd.read_html(f,header=None)
 # Grupos que entram no site (o Linx exporta a loja inteira; o resto fica de fora)
 GRUPOS=[("Tênis","TENIS"),("Camisetas","CAMISETAS?"),("Bermudas","BERMUDAS?"),("Calças","CALCAS?"),("Moletons","MOLETOM|MOLETONS"),
   ("Jaquetas","JAQUETAS?"),("Regatas","REGATAS?"),("Bonés","BONES?"),("Bolsas","BOLSAS?"),("Tops","TOPS?"),
-  ("Garrafas","GARRAFAS?"),("Meias","MEIAS?"),
+  ("Garrafas","GARRAFAS?"),("Meias","MEIAS?"),("Saias","SAIAS?"),
   # sinônimos do Linx
   ("Bermudas","SHORTS?"),("Camisetas","CAMISAS?"),("Bolsas","MOCHILAS?|RAQUETEIRAS?|THERMOBAGS?"),("Bonés","VISEIRAS?"),("Calças","LEGGINGS?")]
 sem_acento=lambda s:unicodedata.normalize('NFD',s).encode('ascii','ignore').decode().upper()
