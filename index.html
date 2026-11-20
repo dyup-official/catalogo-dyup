@@ -148,6 +148,7 @@ main .wrap{padding-block:20px 48px}
 .mk{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 h2{font-size:20px;line-height:1.15;letter-spacing:-.015em;margin:2px 0 0;text-wrap:balance}
 .cor{font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;color:var(--muted);text-transform:uppercase}
+.refl{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--muted);margin-top:4px;overflow-wrap:anywhere}
 .hc{display:flex;flex-direction:column;gap:4px}
 .hc{flex-direction:row;flex-wrap:wrap;gap:5px}
 .hc span{font:500 11px/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--fg);border-radius:3px;padding:5px 7px}
@@ -349,7 +350,6 @@ function render(){
       <div class="foto${i.foto?" tem":""}"${i.foto?` data-zoom="${i.id}" role="button" tabindex="0" aria-label="Ver foto maior"`:""}>
         ${i.foto?`<img class="p" src="${i.foto}" alt="${i.marca} ${i.modelo} ${i.cor}" loading="lazy">`:`<img class="c" src="${CIRC}" alt="">`}
         <span class="cat">${i.grupo==="Tênis"?i.cat:i.grupo}</span>
-        <span class="ref">REF ${i.refs.join(" · ")}</span>
         ${i.foto?`<span class="lupa" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>`:""}
       </div>
       <div class="info">
@@ -357,6 +357,7 @@ function render(){
           ${i.marca?`<div class="mk">${i.marca}</div>`:""}
           <h2>${i.modelo}</h2>
           ${i.cor?`<div class="cor">${i.cor}</div>`:""}
+          <div class="refl">REF ${i.refs.join(" · ")}</div>
         </div>
         ${i.hc.length?`<div class="hc">${i.hc.map(k=>`<span>${HCN[k]}</span>`).join("")}</div>`:""}
         <div>
