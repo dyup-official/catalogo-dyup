@@ -39,10 +39,13 @@ for f in sorted(os.listdir(src)):
   ref,gr=GR[base.upper()]
   try: im=Image.open(os.path.join(src,f)); im.load(); im=im.convert('RGBA')
   except Exception as e: res["falha"].append(f"{f}: {e}"); continue
-  if ses is None:
-    from rembg import new_session, remove
-    ses=new_session('isnet-general-use')
-  cut=remove(im,session=ses)
+  if im.split()[-1].getextrema()[0]<20:  # foto já vem com fundo transparente: usa o recorte dela (o rembg estraga)
+    cut=im
+  else:
+    if ses is None:
+      from rembg import new_session, remove
+      ses=new_session('isnet-general-use')
+    cut=remove(im,session=ses)
   tenis=gr=='Tênis'
   a=cut.split()[-1]
   if tenis:
@@ -58,7 +61,7 @@ for f in sorted(os.listdir(src)):
         t=sorted(l[0] for l in viz)[len(viz)//2]; b=sorted(l[1] for l in viz)[len(viz)//2]
         for y in range(max(t,lim[x][0]) if lim[x] else t,b+1): px[x,y]=255
     cut=im.copy()
-  else:  # roupa clara em fundo cinza deixa halo: borda firme, recuada 2px e suavizada
+  elif cut is not im:  # roupa clara em fundo cinza deixa halo: borda firme, recuada 2px e suavizada
     a=a.point(lambda p:0 if p<160 else 255).filter(ImageFilter.MinFilter(5 if im.width>=1000 else 3)).filter(ImageFilter.GaussianBlur(1.2))
     cut=im.copy()
   cut.putalpha(a)
