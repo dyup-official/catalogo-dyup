@@ -178,6 +178,45 @@ dialog.zoom[open]{animation:zin .18s ease-out}
 .zoom .tx{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:14px 16px 16px;border-top:1px solid var(--line)}
 .zoom .tx h3{margin:2px 0 0;font-size:19px;line-height:1.15;letter-spacing:-.015em}
 .zoom .preco{flex:none}
+
+/* Página do produto: abre por cima do catálogo, com link próprio (#p/marca-modelo-cor) */
+dialog.prod{border:0;padding:0;margin:0;position:fixed;inset:0;z-index:15;width:100%;max-width:100%;height:100%;max-height:100%;overflow:auto;background:var(--bg);color:var(--fg)}
+body.vendo{overflow:hidden}
+.prod .topo{position:sticky;top:0;z-index:2;background:var(--bg);border-bottom:1px solid var(--line)}
+.prod .topo .wrap{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-block:10px;padding-top:max(10px,env(safe-area-inset-top,0px))}
+.prod .topo button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:7px;font:500 12px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;padding:10px 12px;border-radius:8px;background:var(--chip);color:var(--fg)}
+.prod .topo button:focus-visible{outline:2px solid var(--volt);outline-offset:2px}
+.prod .topo svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
+.prod .corpo{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;padding-block:22px 110px}
+@media (max-width:820px){.prod .corpo{grid-template-columns:1fr;gap:18px;padding-top:14px}}
+.prod .gal{position:sticky;top:70px;align-self:start}
+@media (max-width:820px){.prod .gal{position:static}}
+.prod .gal .g{background:#fff;border:1px solid var(--line);border-radius:8px;aspect-ratio:1/1;display:flex;cursor:zoom-in}
+.prod .gal .g img{width:100%;height:100%;object-fit:contain;padding:5%}
+.prod .min{display:flex;gap:8px;margin-top:10px;overflow-x:auto}
+.prod .min button{all:unset;cursor:pointer;flex:none;width:64px;height:64px;background:#fff;border:1px solid var(--line);border-radius:6px}
+.prod .min button[aria-pressed="true"]{border:2px solid var(--fg)}
+.prod .min img{width:100%;height:100%;object-fit:contain;padding:4px;box-sizing:border-box}
+.prod h1{font-size:clamp(26px,3.4vw,36px);line-height:1.05;letter-spacing:-.025em;margin:4px 0 6px;font-weight:800}
+.prod .lin{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:16px}
+.prod .preco{font-size:19px;padding:10px 12px}
+.prod .bloco{margin-top:22px}
+.prod .cores{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.prod .cores a{display:block;width:62px;height:62px;background:#fff;border:1px solid var(--line);border-radius:6px}
+.prod .cores a[aria-current="true"]{border:2px solid var(--fg)}
+.prod .cores img{width:100%;height:100%;object-fit:contain;padding:4px;box-sizing:border-box}
+.prod .tams{margin-top:8px}
+.prod .tams button{padding:11px 12px;font-size:14px}
+.prod .add{padding:14px 18px;font-size:13px}
+.prod .desc{font-size:16px;line-height:1.55;margin:8px 0 0;max-width:60ch}
+.prod .ind{margin-top:10px;font-size:15px}
+.prod .ind b{font-weight:700}
+.prod dl{display:grid;grid-template-columns:auto 1fr;margin:8px 0 0;border-top:1px solid var(--line)}
+.prod dt,.prod dd{margin:0;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.prod dt{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-right:18px;display:flex;align-items:center}
+.card h2 a{color:inherit;text-decoration:none}
+.card h2 a:hover{text-decoration:underline}
+.card .ver{font:500 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--fg);text-decoration:underline;margin-top:6px;display:inline-block}
 </style>
 
 <header class="marca">
@@ -249,6 +288,10 @@ dialog.zoom[open]{animation:zin .18s ease-out}
   Pedido <span class="n" id="carN">0</span></button>
 <dialog class="zoom" id="zoom" aria-labelledby="zoomT"><div class="ft"><img id="zoomImg" alt=""><button class="x" type="button" id="zoomX" aria-label="Fechar">×</button></div>
 <div class="tx"><div><div class="mk" id="zoomM"></div><h3 id="zoomT"></h3><div class="cor" id="zoomC"></div></div><span class="preco" id="zoomP"></span></div></dialog>
+<dialog class="prod" id="prod" aria-labelledby="prodT"><div class="topo"><div class="wrap">
+  <button type="button" id="prodX"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Catálogo</button>
+  <button type="button" id="prodS"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg>Compartilhar</button>
+</div></div><div class="wrap corpo" id="prodC"></div></dialog>
 <dialog class="car" id="car" aria-labelledby="carT"><div class="in">
   <header><h2 id="carT">Seu pedido</h2><button class="x" type="button" id="carX" aria-label="Fechar">×</button></header>
   <ul id="carL"></ul>
@@ -342,7 +385,7 @@ function render(){
   $("cont").textContent = L.length ? `${L.length} ${L.length>1?"opções":"opção"}` : "";
   $("grade").innerHTML = L.length ? L.map(i => `
     <article class="card">
-      <div class="foto${i.foto?" tem":""}"${i.foto?` data-zoom="${i.id}" role="button" tabindex="0" aria-label="Ver foto maior"`:""}>
+      <div class="foto${i.foto?" tem":""}" data-prod="${i.id}" role="button" tabindex="0" aria-label="Ver ${i.marca} ${i.modelo}">
         ${i.foto?`<img class="p" src="${i.foto}" alt="${i.marca} ${i.modelo} ${i.cor}" loading="lazy">`:`<img class="c" src="${CIRC}" alt="">`}
         <span class="cat">${i.grupo==="Tênis"?i.cat:i.grupo}</span>
         ${i.foto?`<span class="lupa" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>`:""}
@@ -350,9 +393,10 @@ function render(){
       <div class="info">
         <div>
           ${i.marca?`<div class="mk">${i.marca}</div>`:""}
-          <h2>${i.modelo}</h2>
+          <h2><a href="#p/${i.pid}" data-prod="${i.id}">${i.modelo}</a></h2>
           ${i.cor?`<div class="cor">${i.cor}</div>`:""}
           <div class="refl">REF ${i.refs.join(" · ")}</div>
+          <a class="ver" href="#p/${i.pid}" data-prod="${i.id}">${DESCR[i.mk]?"Ver detalhes e ficha técnica":"Ver detalhes"}</a>
         </div>
         ${i.hc.length?`<div class="hc">${i.hc.map(k=>`<span>${HCN[k]}</span>`).join("")}</div>`:""}
         <div>
@@ -365,12 +409,12 @@ function render(){
     </article>`).join("") : `<div class="vazio">Nenhum produto com esses filtros.</div>`;
 }
 ITENS.forEach((i,n)=>{ i.id = n; });
-function abreZoom(id){ const i=ITENS.find(x=>x.id==id); if(!i||!i.foto) return;
-  $("zoomImg").src=i.zoom||i.foto; $("zoomImg").alt=`${i.marca} ${i.modelo} ${i.cor}`;
+function abreZoom(id, img){ const i=ITENS.find(x=>x.id==id); if(!i||!i.foto) return;
+  $("zoomImg").src=img||i.zoom||i.foto; $("zoomImg").alt=`${i.marca} ${i.modelo} ${i.cor}`;
   $("zoomM").textContent=i.marca; $("zoomT").textContent=i.modelo; $("zoomC").textContent=i.cor; $("zoomP").textContent=brl(i.preco);
   $("zoom").showModal(); }
-$("grade").addEventListener("click", e=>{ const f=e.target.closest("[data-zoom]"); if(f) abreZoom(f.dataset.zoom); });
-$("grade").addEventListener("keydown", e=>{ const f=e.target.closest("[data-zoom]"); if(f&&(e.key==="Enter"||e.key===" ")){ e.preventDefault(); abreZoom(f.dataset.zoom); } });
+$("grade").addEventListener("click", e=>{ const f=e.target.closest("[data-prod]"); if(f){ e.preventDefault(); abreProd(ITENS[+f.dataset.prod], true); } });
+$("grade").addEventListener("keydown", e=>{ const f=e.target.closest(".foto[data-prod]"); if(f&&(e.key==="Enter"||e.key===" ")){ e.preventDefault(); abreProd(ITENS[+f.dataset.prod], true); } });
 $("zoomX").onclick=()=>$("zoom").close();
 $("zoom").addEventListener("click", e=>{ if(e.target===$("zoom")) $("zoom").close(); });
 
@@ -404,6 +448,76 @@ $("opcoes").addEventListener("change", e=>{
   if(k) $("cont").scrollIntoView({behavior:"smooth", block:"start"});
 });
 
+
+// Página do produto
+const DESCR = __DESCR__;
+const FICHA = [["amortecimento","Amortecimento"],["pisada","Pisada"],["drop","Drop"],["peso","Peso"],["entressola","Entressola"],["cabedal","Cabedal"],["solado","Solado"]];
+const TITULO = document.title;
+let prodAtual = null, prodFoto = 0, prodEmpurrou = false;
+function abreProd(i, push){
+  if(!i) return;
+  prodAtual = i; prodFoto = 0;
+  if(push){ history.pushState({p:i.pid},"", "#p/"+i.pid); prodEmpurrou = true; }
+  pintaProd();
+  if(!$("prod").open){ $("prod").show(); document.body.classList.add("vendo"); if(document.activeElement) document.activeElement.blur(); }
+  $("prod").scrollTop = 0;
+  document.title = `${i.marca} ${i.modelo} ${tc(i.cor)} · DYUP`;
+}
+function pintaProd(){
+  const i = prodAtual, d = DESCR[i.mk];
+  const fotos = i.fotos && i.fotos.length ? i.fotos : (i.foto ? [[i.foto, i.zoom||i.foto]] : []);
+  const cores = ITENS.filter(x=>x.marca===i.marca && x.modelo===i.modelo && x.grupo===i.grupo);
+  $("prodC").innerHTML = `
+    <div class="gal">
+      ${fotos.length ? `<div class="g" id="prodG" role="button" tabindex="0" aria-label="Ver foto maior"><img src="${fotos[prodFoto][0]}" alt="${i.marca} ${i.modelo} ${i.cor}"></div>` : `<div class="g" style="cursor:default;background:var(--tile)"></div>`}
+      ${fotos.length>1 ? `<div class="min">${fotos.map((f,n)=>`<button type="button" data-f="${n}" aria-pressed="${n===prodFoto}" aria-label="Foto ${n+1}"><img src="${f[0]}" alt=""></button>`).join("")}</div>` : ""}
+    </div>
+    <div>
+      <div class="mk">${i.marca}${i.grupo==="Tênis"?" · "+i.cat:""}</div>
+      <h1 id="prodT">${i.modelo}</h1>
+      ${i.cor?`<div class="cor">${i.cor}</div>`:""}
+      <div class="refl">REF ${i.refs.join(" · ")}</div>
+      ${cores.length>1 ? `<div class="bloco"><div class="rot">Cores disponíveis</div><div class="cores">${cores.map(x=>`<a href="#p/${x.pid}" data-c="${x.id}" aria-current="${x===i}" title="${x.cor}">${x.foto?`<img src="${x.foto}" alt="${x.cor}">`:x.cor}</a>`).join("")}</div></div>` : ""}
+      <div class="bloco"><div class="rot">Tamanhos</div>
+        <div class="tams" id="prodTam">${i.tam.map(t=>`<button type="button" data-t="${t}" aria-pressed="${sel[i.id]===t}">${t}</button>`).join("")}</div></div>
+      <div class="lin"><span class="preco">${brl(i.preco)}</span><button class="add" type="button" id="prodAdd" ${sel[i.id]?"":"disabled"}>Adicionar ao pedido</button></div>
+      ${sel[i.id]?"":`<div class="dica" style="margin-top:8px">Escolha o tamanho para adicionar</div>`}
+      ${i.hc.length?`<div class="bloco"><div class="rot">Bom para</div><div class="hc" style="margin-top:8px">${i.hc.map(k=>`<span>${HCN[k]}</span>`).join("")}</div></div>`:""}
+      ${d ? `<div class="bloco"><div class="rot">Descrição</div><p class="desc">${d.descricao}</p>
+        ${d.indicado?`<p class="ind"><b>Indicado para:</b> ${d.indicado}</p>`:""}</div>
+        <div class="bloco"><div class="rot">Ficha técnica</div><dl>${FICHA.map(([k,r])=>`<dt>${r}</dt><dd>${d[k]||"—"}</dd>`).join("")}</dl></div>` : ""}
+    </div>`;
+}
+function fechaProd(){
+  if(!$("prod").open) return;
+  $("prod").close(); document.body.classList.remove("vendo"); prodAtual = null; document.title = TITULO;
+}
+$("prodX").addEventListener("click", ()=>{ if(prodEmpurrou){ history.back(); } else { history.replaceState(null,"",location.pathname+location.search); fechaProd(); } });
+document.addEventListener("keydown", e=>{ if(e.key==="Escape" && $("prod").open && !$("zoom").open && !$("car").open){ $("prodX").click(); } });
+$("prodC").addEventListener("click", e=>{
+  const c = e.target.closest("[data-c]");
+  if(c){ e.preventDefault(); const x=ITENS[+c.dataset.c]; history.replaceState({p:x.pid},"","#p/"+x.pid); abreProd(x,false); return; }
+  const f = e.target.closest("[data-f]");
+  if(f){ prodFoto=+f.dataset.f; pintaProd(); return; }
+  const t = e.target.closest("#prodTam button");
+  if(t){ const id=prodAtual.id; sel[id] = sel[id]===t.dataset.t ? undefined : t.dataset.t; pintaProd(); render(); return; }
+  if(e.target.closest("#prodAdd")){ adiciona(prodAtual); render(); return; }
+  if(e.target.closest("#prodG")){ const i=prodAtual, fs=i.fotos&&i.fotos.length?i.fotos:[[i.foto,i.zoom]]; abreZoom(i.id, fs[prodFoto][1]); }
+});
+$("prodC").addEventListener("keydown", e=>{ if(e.target.id==="prodG"&&(e.key==="Enter"||e.key===" ")){ e.preventDefault(); e.target.click(); } });
+$("prodS").addEventListener("click", async ()=>{
+  const i = prodAtual; if(!i) return;
+  const url = location.href.split("#")[0]+"#p/"+i.pid, txt = `${i.marca} ${i.modelo} na DYUP`;
+  if(navigator.share){ try{ await navigator.share({title:txt, text:txt, url}); }catch(_){} return; }
+  try{ await navigator.clipboard.writeText(url); toast("Link copiado"); }catch(_){ prompt("Copie o link", url); }
+});
+function rota(){
+  const m = decodeURIComponent(location.hash).match(/^#p\/(.+)$/);
+  if(m){ const i = ITENS.find(x=>x.pid===m[1]); if(i){ abreProd(i,false); return true; } }
+  fechaProd(); return false;
+}
+window.addEventListener("popstate", ()=>{ prodEmpurrou = false; rota(); });
+
 // Carrinho
 const ZAP = "5544991218494";
 const chave = (i,t) => i.refs.join("/")+"|"+t;
@@ -431,12 +545,13 @@ $("grade").addEventListener("click", e=>{
   const t = e.target.closest(".tams button");
   if(t){ const id=+t.parentNode.dataset.id; sel[id] = sel[id]===t.dataset.t ? undefined : t.dataset.t; render(); return; }
   const a = e.target.closest(".add");
-  if(a){ const i=ITENS[+a.dataset.id], tam=sel[i.id]; if(!tam) return;
+  if(a) adiciona(ITENS[+a.dataset.id]);
+});
+function adiciona(i){ const tam=sel[i.id]; if(!tam) return;
     const k=chave(i,tam), ex=car.find(c=>c.k===k);
     if(ex) ex.q++; else car.push({k, marca:i.marca, modelo:i.modelo, cor:i.cor, ref:i.refs.join(" / "), tam, preco:i.preco, q:1});
     salva(); pintaCar(); toast(`${i.modelo} · tam. ${tam} adicionado`);
     $("carBtn").classList.remove("pulo"); void $("carBtn").offsetWidth; $("carBtn").classList.add("pulo"); }
-});
 $("carL").addEventListener("click", e=>{
   const b=e.target.closest("button"); if(!b) return;
   if(b.dataset.rm!==undefined) car.splice(+b.dataset.rm,1);
@@ -467,4 +582,5 @@ $("carNome").addEventListener("input", ()=>{ $("carZap").href = linkZap(); });
 $("carZap").addEventListener("click", e=>{ if(!car.length){ e.preventDefault(); return; } $("carZap").href = linkZap(); });
 pintaCar();
 abreGrupo(GRUPOS.find(g=>"#"+slug(g)===decodeURIComponent(location.hash)) || "", false);
+rota();
 </script>

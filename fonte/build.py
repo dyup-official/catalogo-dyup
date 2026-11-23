@@ -54,6 +54,8 @@ MOD=[ # (marca, prefixo na descrição, nome, categoria)
 AQUI=os.path.dirname(os.path.abspath(__file__))
 EXC=set(l.strip() for f in (os.environ.get('EXCLUIR',os.path.join(AQUI,'excluir.txt')),os.path.join(AQUI,'excluir-revisao.txt')) if os.path.exists(f)
         for l in open(f) if l.strip() and not l.startswith('#'))  # excluir.txt fixo + o que a planilha de revisão marcou
+import unicodedata
+def slugify(s): return re.sub(r'[^a-z0-9]+','-',unicodedata.normalize('NFD',s).encode('ascii','ignore').decode().lower()).strip('-')
 def emb(f,ref):  # foto leve para o site: 640 px, JPEG 82, em fotos/REF.jpg
   from PIL import Image
   dst=os.path.join(SITE,'fotos',ref+'.jpg')
@@ -118,6 +120,14 @@ for it in itens.values():
   it['foto']=next((emb(os.path.join(FOT,r+'.jpg'),r) for r in it['refs'] if os.path.exists(os.path.join(FOT,r+'.jpg'))),'') \
     or next(('fotos/'+r+'.jpg' for r in it['refs'] if os.path.exists(os.path.join(SITE,'fotos',r+'.jpg'))),'')
   it['zoom']=(lambda g: g if os.path.exists(os.path.join(SITE,g)) else it['foto'])(it['foto'].replace('fotos/','fotos/grande/')) if it['foto'] else ''
+  # fotos extras do mesmo produto (REF_2.jpg, REF_3.jpg ...) para a galeria da página do produto
+  it['fotos']=[[it['foto'],it['zoom']]] if it['foto'] else []
+  base=next((r for r in it['refs'] if os.path.exists(os.path.join(FOT,r+'.jpg'))),None)
+  for n in range(2,7):
+    if base and os.path.exists(os.path.join(FOT,f'{base}_{n}.jpg')):
+      p=emb(os.path.join(FOT,f'{base}_{n}.jpg'),f'{base}_{n}'); it['fotos'].append([p,p.replace('fotos/','fotos/grande/')])
+  if len(it['fotos'])<2: it.pop('fotos')
+  it['mk']=slugify(it['marca']+' '+it['modelo'])
   if not it['foto']: print('SEM FOTO:',it['marca'],it['modelo'],it['cor'],it['refs'],file=sys.stderr)
   if it['cat']=='Corrida' and not it['hc'] and it['modelo'] not in ('Speedgoat 7',): print('SEM HC:',it['modelo'],file=sys.stderr)
   it['tam']=list(it['tam'])  # sem quantidade: o catálogo vai para clientes
@@ -131,11 +141,22 @@ for it in L:
   it['ent']=min((ENT[r] for r in it['refs']),default=HOJE)
 json.dump(dict(sorted(ENT.items())),open(ENT_F,'w'),indent=0,ensure_ascii=False)
 L.sort(key=lambda i:(i['grupo']!='Tênis',i['grupo'],i['marca'],i['modelo'],i['cor']))
+# link próprio de cada produto (#p/marca-modelo-cor); se repetir, acrescenta a referência
+usados=set()
+for it in L:
+  p=slugify(' '.join(x for x in (it['marca'],it['modelo'],it['cor']) if x))
+  if p in usados: p=p+'-'+slugify(it['refs'][0])
+  usados.add(p); it['pid']=p
+# descrições aprovadas (fonte/descricoes.json), por marca e modelo; só entram as dos modelos que estão no site
+DES_F=os.environ.get('DESCRICOES',os.path.join(AQUI,'descricoes.json'))
+DES=json.load(open(DES_F)) if os.path.exists(DES_F) else {}
+CAMPOS=('descricao','indicado','amortecimento','pisada','drop','peso','entressola','cabedal','solado')
+DESCR={k:{c:v.get(c,'') for c in CAMPOS} for k,v in DES.items() if any(it['mk']==k for it in L)}
 for f in ('logo-volt.png','logo-carbono.png','circuito.png'): shutil.copy(os.path.join(A,f),os.path.join(SITE,'img',f))
 from PIL import Image
 ic=Image.new('RGB',(192,192),(16,24,32)); lg=Image.open(os.path.join(A,'logo-volt.png')).convert('RGBA'); lg.thumbnail((160,160)); ic.paste(lg,((192-lg.width)//2,(192-lg.height)//2),lg); ic.save(os.path.join(SITE,'img','icone.png'))
 html=open(os.path.join(AQUI,'template.html')).read()
-html=html.replace('__DADOS__',json.dumps(L,ensure_ascii=False)).replace('__SALDO__',DATA_SALDO).replace('__HCNOMES__',json.dumps(NOMES,ensure_ascii=False))
+html=html.replace('__DADOS__',json.dumps(L,ensure_ascii=False)).replace('__SALDO__',DATA_SALDO).replace('__HCNOMES__',json.dumps(NOMES,ensure_ascii=False)).replace('__DESCR__',json.dumps(DESCR,ensure_ascii=False))
 html='<!doctype html>\n<html lang="pt-BR">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'+html+'\n</html>\n'
 open(os.path.join(SITE,'index.html'),'w').write(html)
 shutil.copy(os.path.join(AQUI,'pedido.html'),os.path.join(SITE,'pedido.html'))
