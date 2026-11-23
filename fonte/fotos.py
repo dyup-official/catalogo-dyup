@@ -1,4 +1,6 @@
-# Padroniza as fotos novas do catálogo DYUP: fundo branco 1000x1000, produto recortado e centralizado, sombra suave.
+# Padroniza as fotos novas do catálogo DYUP: 1000x1000, produto recortado.
+# v3 (23/11/2026, padrão da pasta de referência do Leonardo): tênis em fundo cinza #DBDBDB, sem sombra, 92% da largura,
+# sola a 21% da borda de baixo, nitidez leve. Roupas e acessórios continuam em fundo branco com sombra.
 # Uso: python3 fotos.py <pasta_origem> <pasta_destino> <raw.json>
 # O nome do arquivo é a referência do Linx (REF.jpg, REF_2.png ...); qualquer formato que o Pillow abra.
 # Tênis: de perfil, bico para a direita (fotos viradas são espelhadas sozinhas). Roupas e acessórios: centralizados.
@@ -13,6 +15,7 @@ from scipy import ndimage as ndi
 try: import pillow_avif  # noqa
 except Exception: pass
 S=1000
+LARG=float(os.environ.get('LARG','0.92')); BASE=float(os.environ.get('BASE','0.79')); FUNDO=int(os.environ.get('FUNDO','219')); SOMBRA=float(os.environ.get('SOMBRA','0')); NIT=int(os.environ.get('NIT','60'))
 SRGB=ImageCms.createProfile('sRGB')
 
 def abrir(p):
@@ -164,18 +167,20 @@ def main():
     rgb,al=rgb[y0:y1,x0:x1],al[y0:y1,x0:x1]
     if tenis and (ref in flip or (ref not in noflip and virado(al>128))): rgb,al=rgb[:,::-1],al[:,::-1]
     cut=Image.fromarray(rgb); cut.putalpha(Image.fromarray(np.ascontiguousarray(al)))
-    if tenis: k=min(S*0.90/cut.width, S*0.55/cut.height)
+    if tenis: k=min(S*LARG/cut.width, S*0.60/cut.height)
     else: k=min(S*0.80/cut.width, S*0.80/cut.height)
     cut=cut.resize((round(cut.width*k),round(cut.height*k)),Image.LANCZOS)
-    x=(S-cut.width)//2; y=round(S*0.71)-cut.height if tenis else (S-cut.height)//2-10
+    x=(S-cut.width)//2; y=round(S*BASE)-cut.height if tenis else (S-cut.height)//2-10
     A=np.array(cut.getchannel('A'))
     sh=sombra_tenis(A,x,y) if tenis else sombra_roupa(cut.width,x,y+cut.height)
-    can=np.full((S,S,3),255,np.float32); cor=np.array([120,122,126],np.float32)
+    sh=sh*(SOMBRA if tenis else 1)
+    can=np.full((S,S,3),FUNDO if tenis else 255,np.float32); cor=np.array([120,122,126],np.float32)
     can=can*(1-sh[...,None])+cor*sh[...,None]
     can=Image.fromarray(can.round().astype(np.uint8))
     can.paste(cut,(x,y),cut)
+    if NIT and tenis: can=can.filter(ImageFilter.UnsharpMask(radius=1.2,percent=NIT,threshold=2))
     out=ref+('_'+n if n else '')+'.jpg'
-    can.save(os.path.join(dst,out),quality=90,subsampling=0); res["ok"].append({"arquivo":f,"foto":out,"grupo":gr})
+    can.save(os.path.join(dst,out),quality=92,subsampling=0); res["ok"].append({"arquivo":f,"foto":out,"grupo":gr})
   print(json.dumps(res,ensure_ascii=False))
 
 if __name__=='__main__': main()

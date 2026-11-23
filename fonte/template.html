@@ -217,6 +217,11 @@ body.vendo{overflow:hidden}
 .card h2 a{color:inherit;text-decoration:none}
 .card h2 a:hover{text-decoration:underline}
 .card .ver{font:500 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--fg);text-decoration:underline;margin-top:6px;display:inline-block}
+/* Tênis: foto com fundo cinza claro (#DBDBDB), no padrão de referência de 23/11/2026 */
+.foto.tem.cinza{background:#dbdbdb}
+.foto.cinza img.p{padding:0}
+.prod .gal .g.cinza,.prod .min button.cinza,.prod .cores a.cinza,.zoom .ft.cinza{background:#dbdbdb}
+.prod .gal .g.cinza img{padding:0}
 </style>
 
 <header class="marca">
@@ -385,7 +390,7 @@ function render(){
   $("cont").textContent = L.length ? `${L.length} ${L.length>1?"opções":"opção"}` : "";
   $("grade").innerHTML = L.length ? L.map(i => `
     <article class="card">
-      <div class="foto${i.foto?" tem":""}" data-prod="${i.id}" role="button" tabindex="0" aria-label="Ver ${i.marca} ${i.modelo}">
+      <div class="foto${i.foto?" tem":""}${i.foto&&i.grupo==="Tênis"?" cinza":""}" data-prod="${i.id}" role="button" tabindex="0" aria-label="Ver ${i.marca} ${i.modelo}">
         ${i.foto?`<img class="p" src="${i.foto}" alt="${i.marca} ${i.modelo} ${i.cor}" loading="lazy">`:`<img class="c" src="${CIRC}" alt="">`}
         <span class="cat">${i.grupo==="Tênis"?i.cat:i.grupo}</span>
         ${i.foto?`<span class="lupa" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>`:""}
@@ -410,7 +415,7 @@ function render(){
 }
 ITENS.forEach((i,n)=>{ i.id = n; });
 function abreZoom(id, img){ const i=ITENS.find(x=>x.id==id); if(!i||!i.foto) return;
-  $("zoomImg").src=img||i.zoom||i.foto; $("zoomImg").alt=`${i.marca} ${i.modelo} ${i.cor}`;
+  $("zoomImg").src=img||i.zoom||i.foto; document.querySelector(".zoom .ft").classList.toggle("cinza", i.grupo==="Tênis"); $("zoomImg").alt=`${i.marca} ${i.modelo} ${i.cor}`;
   $("zoomM").textContent=i.marca; $("zoomT").textContent=i.modelo; $("zoomC").textContent=i.cor; $("zoomP").textContent=brl(i.preco);
   $("zoom").showModal(); }
 $("grade").addEventListener("click", e=>{ const f=e.target.closest("[data-prod]"); if(f){ e.preventDefault(); abreProd(ITENS[+f.dataset.prod], true); } });
@@ -469,15 +474,15 @@ function pintaProd(){
   const cores = ITENS.filter(x=>x.marca===i.marca && x.modelo===i.modelo && x.grupo===i.grupo);
   $("prodC").innerHTML = `
     <div class="gal">
-      ${fotos.length ? `<div class="g" id="prodG" role="button" tabindex="0" aria-label="Ver foto maior"><img src="${fotos[prodFoto][0]}" alt="${i.marca} ${i.modelo} ${i.cor}"></div>` : `<div class="g" style="cursor:default;background:var(--tile)"></div>`}
-      ${fotos.length>1 ? `<div class="min">${fotos.map((f,n)=>`<button type="button" data-f="${n}" aria-pressed="${n===prodFoto}" aria-label="Foto ${n+1}"><img src="${f[0]}" alt=""></button>`).join("")}</div>` : ""}
+      ${fotos.length ? `<div class="g${i.grupo==="Tênis"?" cinza":""}" id="prodG" role="button" tabindex="0" aria-label="Ver foto maior"><img src="${fotos[prodFoto][0]}" alt="${i.marca} ${i.modelo} ${i.cor}"></div>` : `<div class="g" style="cursor:default;background:var(--tile)"></div>`}
+      ${fotos.length>1 ? `<div class="min">${fotos.map((f,n)=>`<button type="button" class="${i.grupo==="Tênis"?"cinza":""}" data-f="${n}" aria-pressed="${n===prodFoto}" aria-label="Foto ${n+1}"><img src="${f[0]}" alt=""></button>`).join("")}</div>` : ""}
     </div>
     <div>
       <div class="mk">${i.marca}${i.grupo==="Tênis"?" · "+i.cat:""}</div>
       <h1 id="prodT">${i.modelo}</h1>
       ${i.cor?`<div class="cor">${i.cor}</div>`:""}
       <div class="refl">REF ${i.refs.join(" · ")}</div>
-      ${cores.length>1 ? `<div class="bloco"><div class="rot">Cores disponíveis</div><div class="cores">${cores.map(x=>`<a href="#p/${x.pid}" data-c="${x.id}" aria-current="${x===i}" title="${x.cor}">${x.foto?`<img src="${x.foto}" alt="${x.cor}">`:x.cor}</a>`).join("")}</div></div>` : ""}
+      ${cores.length>1 ? `<div class="bloco"><div class="rot">Cores disponíveis</div><div class="cores">${cores.map(x=>`<a class="${x.grupo==="Tênis"&&x.foto?"cinza":""}" href="#p/${x.pid}" data-c="${x.id}" aria-current="${x===i}" title="${x.cor}">${x.foto?`<img src="${x.foto}" alt="${x.cor}">`:x.cor}</a>`).join("")}</div></div>` : ""}
       <div class="bloco"><div class="rot">Tamanhos</div>
         <div class="tams" id="prodTam">${i.tam.map(t=>`<button type="button" data-t="${t}" aria-pressed="${sel[i.id]===t}">${t}</button>`).join("")}</div></div>
       <div class="lin"><span class="preco">${brl(i.preco)}</span><button class="add" type="button" id="prodAdd" ${sel[i.id]?"":"disabled"}>Adicionar ao pedido</button></div>
