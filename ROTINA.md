@@ -48,7 +48,7 @@ Depois de todo push que muda o site: `python3 painel/monta.py /home/claude/catal
 publish_files do arquivo como index.html no slug 02f6af4d (base_version do get_artifact). Comentários feitos no site viram pedidos de mudança no site real.
 
 ## Descrições de produto e página de produto (desde 23/11/2026)
-- Nomes de tecnologia, espuma, placa, cabedal e solado ficam exatamente como no site da marca (com ™/®, sem traduzir: "Engineered mesh upper", "FF BLAST™ MAX cushioning"). Só o texto de ligação fica em português. Pedido do Leonardo em 23/11/2026.
+- Só o NOME da tecnologia fica como a marca escreve (com ™/®: "FF BLAST™ MAX", "PureGEL®", "FLUIDRIDE®", "ZoomX"). O complemento é traduzido: foam = espuma, plate = placa, trampoline pod = formato de trampolim, outsole = solado, cushioning = amortecimento. Nos campos da ficha, só os nomes separados por " | " (ex.: solado "ASICSGRIP™ | AHAR® LO"). Tipo de cabedal como Engineered Mesh/Knit/Woven fica em inglês. Padrão do Leonardo, Novablast 6, 23/11/2026.
 - Se o site da marca não tiver algum dado da ficha, pesquisar em lojas e reviews especializados (Running Warehouse, Fleet Feet, RunRepeat, REI) e anotar a fonte no campo obs. Só deixar "—" se nenhuma fonte confiável trouxer o dado. Pedido do Leonardo em 23/11/2026.
 - Cada produto tem página própria no site (#p/marca-modelo-cor), com galeria, cores, tamanhos, descrição e ficha técnica.
 - Descrições ficam no painel 02f6af4d, coleção `descricoes` (id = slug de marca + modelo; status pendente/aprovado; aprovado_em, publicado_em).
