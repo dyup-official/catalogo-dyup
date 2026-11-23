@@ -78,6 +78,13 @@ header.marca .circ{position:absolute;right:-40px;top:-30px;height:220px;opacity:
 .tams button:focus-visible{outline:2px solid var(--volt);outline-offset:2px}
 .add{font:600 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;border:0;border-radius:4px;padding:10px 12px;background:var(--carbono);color:var(--branco);cursor:pointer}
 .add:disabled{opacity:.35;cursor:default}
+.quero{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:8px;width:100%;min-height:40px;font:600 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;border:1.5px solid #1fa855;border-radius:4px;padding:10px 12px;background:transparent;color:#128a43;text-decoration:none;cursor:pointer}
+.quero svg{width:16px;height:16px;fill:currentColor;flex:none}
+.quero[aria-disabled="true"]{opacity:.4;cursor:default}
+.card.alvo{outline:3px solid var(--volt);outline-offset:2px}
+.meu{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px;font-size:13px;color:var(--muted)}
+.meu b{color:var(--ink,inherit)}
+.meu button{font:600 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);background:transparent;border-radius:999px;padding:7px 11px;cursor:pointer;color:inherit}
 .dica{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
 .carBtn{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;align-items:center;gap:9px;border:0;border-radius:999px;padding:13px 18px;background:var(--volt);color:var(--carbono);font:700 13px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;box-shadow:0 10px 28px rgba(16,24,32,.35);cursor:pointer}
 .carBtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
@@ -222,7 +229,7 @@ dialog.zoom[open]{animation:zin .18s ease-out}
     <div class="campo"><span class="rf">Marca</span><div class="grupo" id="fMarca"></div></div>
     <div class="campo" id="cCat" hidden><span class="rf">Tipo de tênis</span><div class="grupo" id="fCat"></div></div>
     <div class="linha">
-      <label class="campo" for="fTam"><span class="rf">Tamanho</span><select id="fTam"><option value="">Todos</option></select></label>
+      <label class="campo" for="fTam"><span class="rf">Meu número / tamanho</span><select id="fTam"><option value="">Todos</option></select></label>
       <label class="campo" for="fOrd"><span class="rf">Ordenar por</span><select id="fOrd">
         <option value="novos">Mais novos</option>
         <option value="marca">Marca e modelo</option>
@@ -237,6 +244,7 @@ dialog.zoom[open]{animation:zin .18s ease-out}
 <main>
   <div class="wrap">
     <div class="secao"><h2 id="secT">Todos os produtos</h2><button type="button" id="verTodos" hidden>Ver todas as categorias</button></div>
+    <p class="meu" id="meu" hidden></p>
     <p class="cont" id="cont"></p>
     <div class="grade" id="grade"></div>
   </div>
@@ -302,7 +310,7 @@ const slug = g => g.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase(
 $("tiles").innerHTML = GRUPOS.map(g=>{ const n=ITENS.filter(i=>i.grupo===g).length;
   return `<button class="tile" type="button" data-g="${g}" aria-pressed="false" ${n?"":"disabled"}><svg viewBox="0 0 24 24" aria-hidden="true">${ICO[g]}</svg><span><b>${g}</b><small>${n?`${n} ${n>1?"opções":"opção"}`:"Em breve"}</small></span></button>`; }).join("");
 function abreGrupo(g, rolar){
-  st.grupo = g; st.marca = ""; st.cat = ""; st.hc = ""; st.tam = "";
+  st.grupo = g; st.marca = ""; st.cat = ""; st.hc = "";
   document.querySelectorAll(".tile").forEach(t=>t.setAttribute("aria-pressed", t.dataset.g===g));
   $("guia").hidden = g!=="Tênis";
   $("cCat").hidden = g!=="Tênis";
@@ -311,7 +319,10 @@ function abreGrupo(g, rolar){
   const base = g ? ITENS.filter(i=>i.grupo===g) : ITENS;
   chips($("fMarca"), uniq(base.map(i=>i.marca).filter(Boolean)).sort(), "marca", "Todas");
   chips($("fCat"), ["Corrida","Trail","Quadra","Treino","Casual","Infantil"].filter(c=>base.some(i=>i.cat===c)), "cat", "Todos");
-  $("fTam").innerHTML = `<option value="">Todos</option>` + ordTam(uniq(base.flatMap(i=>i.tam))).map(t=>`<option value="${t}">${t}</option>`).join("");
+  const tams = ordTam(uniq(base.flatMap(i=>i.tam)));
+  st.tam = [lembra("num"), lembra("let")].find(t=>t && tams.includes(t)) || "";
+  $("fTam").innerHTML = `<option value="">Todos</option>` + tams.map(t=>`<option value="${t}">${t}</option>`).join("");
+  $("fTam").value = st.tam;
   pintaOpc(); render();
   if(rolar) $("secT").scrollIntoView({behavior:"smooth", block:"start"});
 }
@@ -323,11 +334,16 @@ $("tiles").addEventListener("click", e=>{ const t=e.target.closest(".tile"); if(
   history.replaceState(null,"", g ? "#"+slug(g) : location.pathname+location.search);
   abreGrupo(g, !!g); });
 $("verTodos").addEventListener("click", ()=>{ history.replaceState(null,"",location.pathname+location.search); abreGrupo("", false); $("catsT").scrollIntoView({behavior:"smooth"}); });
-$("fTam").addEventListener("change", e=>{st.tam=e.target.value;render()});
+$("fTam").addEventListener("change", e=>{ const v=e.target.value;
+  if(v) guarda(tipoTam(v), v); else if(st.tam) guarda(tipoTam(st.tam), "");
+  st.tam=v; render(); });
 $("fOrd").addEventListener("change", e=>{st.ord=e.target.value;render()});
 $("fBusca").addEventListener("input", e=>{st.q=e.target.value.trim().toLowerCase();render()});
 
 function render(){
+  if(st.tam) ITENS.forEach(i=>{ if(sel[i.id]===undefined && i.tam.includes(st.tam)) sel[i.id]=st.tam; });
+  $("meu").hidden = !st.tam;
+  if(st.tam) $("meu").innerHTML = `Mostrando só o que tem no tamanho <b>${st.tam}</b> <button type="button" id="meuX">Ver todos os tamanhos</button>`;
   let L = ITENS.filter(i =>
     (!st.grupo || i.grupo===st.grupo) && (!st.marca || i.marca===st.marca) && (!st.cat || i.cat===st.cat) && (!st.hc || i.hc.includes(st.hc)) && (!st.tam || i.tam.includes(st.tam)) &&
     (!st.q || [i.marca,i.modelo,i.cor,...i.refs].join(" ").toLowerCase().includes(st.q)));
@@ -341,7 +357,7 @@ function render(){
   else if(st.ord==="maior") L.sort((a,b)=>b.preco-a.preco);
   $("cont").textContent = L.length ? `${L.length} ${L.length>1?"opções":"opção"}` : "";
   $("grade").innerHTML = L.length ? L.map(i => `
-    <article class="card">
+    <article class="card" id="p-${pid(i)}">
       <div class="foto${i.foto?" tem":""}"${i.foto?` data-zoom="${i.id}" role="button" tabindex="0" aria-label="Ver foto maior"`:""}>
         ${i.foto?`<img class="p" src="${i.foto}" alt="${i.marca} ${i.modelo} ${i.cor}" loading="lazy">`:`<img class="c" src="${CIRC}" alt="">`}
         <span class="cat">${i.grupo==="Tênis"?i.cat:i.grupo}</span>
@@ -360,7 +376,8 @@ function render(){
           <div class="tams" data-id="${i.id}">${i.tam.map(t=>`<button type="button" data-t="${t}" aria-pressed="${sel[i.id]===t}" class="${t===st.tam?"on":""}">${t}</button>`).join("")}</div>
         </div>
         <div class="rodape"><span class="preco">${brl(i.preco)}</span><button class="add" type="button" data-id="${i.id}" ${sel[i.id]?"":"disabled"}>Adicionar</button></div>
-        ${sel[i.id]?"":`<div class="dica">Escolha o tamanho para adicionar</div>`}
+        <a class="quero" data-q="${i.id}" href="${sel[i.id]?linkQuero(i,sel[i.id]):"#"}" target="_blank" rel="noopener noreferrer" aria-disabled="${!sel[i.id]}"><svg viewBox="0 0 24 24" aria-hidden="true">${ZAPICO}</svg>Quero esse</a>
+        ${sel[i.id]?"":`<div class="dica">Escolha o tamanho para adicionar ou pedir</div>`}
       </div>
     </article>`).join("") : `<div class="vazio">Nenhum produto com esses filtros.</div>`;
 }
@@ -375,6 +392,17 @@ $("zoomX").onclick=()=>$("zoom").close();
 $("zoom").addEventListener("click", e=>{ if(e.target===$("zoom")) $("zoom").close(); });
 
 const sel = {};
+const tipoTam = t => isNaN(parseFloat(t)) ? "let" : "num";
+const lembra = k => { try{ return localStorage.getItem("dyupTam_"+k)||""; }catch(e){ return ""; } };
+const guarda = (k,v) => { try{ v ? localStorage.setItem("dyupTam_"+k, v) : localStorage.removeItem("dyupTam_"+k); }catch(e){} };
+$("meu").addEventListener("click", e=>{ if(!e.target.closest("#meuX")) return; guarda(tipoTam(st.tam), ""); st.tam=""; $("fTam").value=""; render(); });
+const pid = i => i.refs[0].replace(/[^A-Za-z0-9-]/g,"");
+const ZAPICO = '<path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3.1s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.3 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.2.1.7-.1 1.4Z"/>';
+function linkQuero(i,t){
+  const url = "https://dyup.com.br/#p-" + pid(i);
+  const txt = `Olá! Tenho interesse no ${[i.marca,i.modelo,i.cor].filter(Boolean).join(" ")}, ref. ${i.refs.join(" / ")}, tamanho ${t}, ${brl(i.preco)}.\n${url}`;
+  return `https://wa.me/${ZAP}?text=${encodeURIComponent(txt)}`;
+}
 ITENS.forEach(i=>{ if(i.tam.length===1) sel[i.id]=i.tam[0]; });
 
 // Qual tênis é pra mim?
@@ -429,7 +457,9 @@ function pintaCar(){
 }
 $("grade").addEventListener("click", e=>{
   const t = e.target.closest(".tams button");
-  if(t){ const id=+t.parentNode.dataset.id; sel[id] = sel[id]===t.dataset.t ? undefined : t.dataset.t; render(); return; }
+  if(t){ const id=+t.parentNode.dataset.id; sel[id] = sel[id]===t.dataset.t ? null : t.dataset.t; render(); return; }
+  const q = e.target.closest(".quero");
+  if(q && q.getAttribute("aria-disabled")==="true"){ e.preventDefault(); toast("Escolha o tamanho primeiro"); return; }
   const a = e.target.closest(".add");
   if(a){ const i=ITENS[+a.dataset.id], tam=sel[i.id]; if(!tam) return;
     const k=chave(i,tam), ex=car.find(c=>c.k===k);
@@ -466,5 +496,15 @@ function linkZap(){
 $("carNome").addEventListener("input", ()=>{ $("carZap").href = linkZap(); });
 $("carZap").addEventListener("click", e=>{ if(!car.length){ e.preventDefault(); return; } $("carZap").href = linkZap(); });
 pintaCar();
-abreGrupo(GRUPOS.find(g=>"#"+slug(g)===decodeURIComponent(location.hash)) || "", false);
+function abreHash(){
+  const h = decodeURIComponent(location.hash);
+  const prod = h.startsWith("#p-") && ITENS.find(i=>"#p-"+pid(i)===h);
+  if(prod){ abreGrupo(prod.grupo, false);
+    if(st.tam && !prod.tam.includes(st.tam)){ st.tam=""; $("fTam").value=""; render(); }
+    const el = document.getElementById("p-"+pid(prod));
+    if(el){ el.classList.add("alvo"); setTimeout(()=>el.scrollIntoView({behavior:"smooth", block:"center"}), 150); }
+    return; }
+  abreGrupo(GRUPOS.find(g=>"#"+slug(g)===h) || "", false);
+}
+abreHash();
 </script>
