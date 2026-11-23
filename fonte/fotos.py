@@ -116,8 +116,13 @@ def sombra_tenis(alpha,x0,y0):
     sh[Yc,X]=max(sh[Yc,X],k)
     if 0<=y0+chao<S: chao_sh[y0+chao,X]=k
   contato=ndi.gaussian_filter(sh,(2.2,3))*9
-  difusa=ndi.gaussian_filter(ndi.maximum_filter(chao_sh,(1,25)),(7,22))*5
-  return np.clip(np.maximum(contato*0.8,difusa*0.4),0,0.7)
+  # sombra difusa no chão, no mesmo tamanho e força do padrão antigo do catálogo
+  from PIL import ImageDraw, ImageFilter
+  cw=cols[-1]-cols[0]+1; xl=x0+cols[0]; yb=y0+chao
+  el=Image.new('L',(S,S),0)
+  ImageDraw.Draw(el).ellipse([xl+cw*0.06, yb-14, xl+cw*0.96, yb+18], fill=140)
+  difusa=np.array(el.filter(ImageFilter.GaussianBlur(16)),np.float32)/255
+  return np.clip(np.maximum(contato*0.8,difusa),0,0.75)
 
 def sombra_roupa(cw,x0,yb):
   sh=np.zeros((S,S),np.float32); y=min(S-1,yb+6)
