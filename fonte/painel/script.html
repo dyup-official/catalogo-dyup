@@ -1,0 +1,69 @@
+<script>
+(async () => {
+  if (!window.claude || !claude.use) return;
+  const comments = await claude.use("comments");
+  if (!comments) return;
+  const $p = id => document.getElementById(id);
+  const adm = $p("pnAdm"), bt = $p("atualizar"), msg = $p("pnMsg");
+  const st = $p("pnSt"), stI = $p("stI"), stT = $p("stT"), stD = $p("stD"), stH = $p("stH");
+  let pode;
+  try { pode = await comments.canSendToClaude(); } catch (e) { pode = "off"; }
+  const hora = ms => new Date(ms).toLocaleString("pt-BR", {day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"});
+  const db = await claude.use("db");
+  let ref = null;
+  if (db) {
+    const fmt = n => typeof n === "number" ? n.toLocaleString("pt-BR") : "–";
+    db.doc("resumo/atual").onSnapshot(snap => {
+      const r = snap.exists ? snap.data() : null;
+      const box = $p("pnResumo");
+      if (!r) { box.hidden = true; return; }
+      box.hidden = false;
+      $p("rData").textContent = r.data_saldo ? "Última atualização do estoque: " + r.data_saldo + (r.publicado_em ? " · publicada em " + hora(r.publicado_em) : "") : "";
+      $p("rProd").textContent = fmt(r.produtos_site);
+      $p("rFoto").textContent = fmt(r.com_foto);
+      $p("rPecas").textContent = fmt(r.pecas_loja);
+      $p("rValor").textContent = r.valor_loja || "–";
+    }, () => {});
+  }
+  if (pode !== "available" && pode !== "no_session") return;
+  adm.style.display = "block";
+  if (pode === "no_session") msg.textContent = "O Claude não está disponível agora.";
+  const ESTADOS = {
+    pedido:      {i:"gira", t:"Pedido enviado", d:"Aguardando o Claude começar a conferência…"},
+    processando: {i:"gira", t:"Processando…", d:"Conferindo estoque, planilha de revisão e fotos."},
+    pronto:      {i:"ok",   t:"Catálogo atualizado", d:""},
+    sem_novidade:{i:"ok",   t:"Nada novo para atualizar", d:""},
+    erro:        {i:"av",   t:"Não deu para atualizar", d:""}
+  };
+  function mostra(s) {
+    const e = s && ESTADOS[s.estado];
+    if (!e) { st.style.display = "none"; return; }
+    st.style.display = "block";
+    stI.className = e.i; stI.textContent = e.i === "ok" ? "✓" : e.i === "av" ? "!" : "";
+    stT.textContent = e.t;
+    stD.textContent = s.texto || e.d;
+    stH.textContent = s.em ? (s.estado === "pedido" || s.estado === "processando" ? "Desde " : "Em ") + hora(s.em) : "";
+    const travado = (s.estado === "pedido" || s.estado === "processando") && s.em && Date.now() - s.em > 20 * 60000;
+    if (travado) { stI.className = "av"; stI.textContent = "!"; stT.textContent = "Está demorando"; stD.textContent = "O computador da loja pode estar desligado. Pode tentar de novo."; }
+    const ocupado = (s.estado === "pedido" || s.estado === "processando") && !travado;
+    bt.disabled = ocupado;
+    if (ocupado) msg.textContent = "";
+  }
+  if (db) { ref = db.doc("status/atual"); ref.onSnapshot(snap => mostra(snap.exists ? snap.data() : null), () => {}); }
+  bt.addEventListener("click", async () => {
+    bt.disabled = true; msg.textContent = "";
+    try {
+      const anchor = await comments.anchorFor(bt);
+      await comments.sendToClaude({anchor, text: "Atualizar catálogo agora: conferir ESTOQUE LINX, REVISAO DE PRODUTOS.xlsx e FOTOS NOVAS (fonte/ROTINA.md) e publicar."});
+      if (ref) { try { await ref.set({estado: "pedido", em: Date.now(), texto: ""}); } catch (e) {} }
+      else msg.textContent = "Pedido enviado. O Claude responde aqui nos comentários e no projeto.";
+    } catch (e) {
+      msg.textContent = e && e.code === "rate_limited" ? "Muitos pedidos seguidos. Tente de novo daqui a pouco."
+        : e && e.code === "claude_unavailable" ? "O Claude não está disponível agora. Tente de novo mais tarde."
+        : "Não consegui pedir a conferência agora. Tente de novo. (" + ((e && e.code) || "erro") + ")";
+      bt.disabled = false;
+    }
+    if (!ref) setTimeout(() => { bt.disabled = false; }, 30000);
+  });
+})();
+</script>

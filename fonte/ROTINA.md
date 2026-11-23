@@ -42,3 +42,7 @@ Limpeza no clique do botão (pedido do Leonardo em 10/11/2026), depois de public
 - ESTOQUE LINX: manter só a planilha .xls mais recente (por mtime), a que acabou de ser processada; apagar todas as outras (pedido do Leonardo em 12/11/2026).
 - FOTOS NOVAS: apagar as fotos já publicadas (as que estão em ultimas-fotos.json e cuja versão tratada está em fotos-padrao). Nunca LEIA-ME.txt.
 - Só apaga se houver ferramenta de apagar no computador (device_bash); sem ela, deixa para o próximo clique.
+
+Painel com o site (pedido do Leonardo em 23/11/2026): o artefato do botão (02f6af4d) mostra o painel em cima e uma cópia do site embaixo para ele comentar.
+Depois de todo push que muda o site: `python3 painel/monta.py /home/claude/catalogo-dyup <scratch>/painel-catalogo.html DD/MM/AAAA` e
+publish_files do arquivo como index.html no slug 02f6af4d (base_version do get_artifact). Comentários feitos no site viram pedidos de mudança no site real.
