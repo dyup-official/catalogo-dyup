@@ -14,7 +14,7 @@ Passos (só segue se algo for novo; senão termina em silêncio):
    a REVISAO DE PRODUTOS.xlsx e as fotos novas/alteradas.
 2. `python3 revisao.py ler "<revisao.xlsx>"` grava excluir-revisao.txt.
 3. `python3 parse.py "<linx.xls>" > raw.json`
-4. Fotos: copie as novas para uma pasta vazia e rode `python3 fotos.py <pasta> /mnt/project-files/catalogo/fotos-padrao raw.json`.
+4. Fotos: copie as novas para uma pasta vazia e rode `python3 fotos.py <pasta> /mnt/project-files/catalogo/fotos-padrao raw.json`. Tênis: refaça com foto_catalogo.py (ver padrão das fotos de tênis abaixo) por cima da saída do fotos.py.
    Saída: ok / sem_ref (nome não bate com referência: não publica e avisa) / falha. Confira as fotos geradas olhando a imagem.
    Grave a lista de refs publicadas (sem o _2) num json para o passo 6. Envie as fotos geradas para `fotos-padrao\` no computador.
 5. `SITE=.. python3 build.py DD/MM/AAAA` (data do cabeçalho da planilha do Linx); `rm -f raw.json`. Compare o ITENS antes e depois.
