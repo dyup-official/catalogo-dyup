@@ -1,5 +1,5 @@
 # Padroniza as fotos novas do catálogo DYUP: 1000x1000, produto recortado.
-# v3 (23/11/2026, padrão da pasta de referência do Leonardo): tênis em fundo cinza #DBDBDB, sem sombra, 92% da largura,
+# v3 (23/11/2026, padrão da pasta de referência do Leonardo): tênis em fundo cinza #DBDBDB, sombra suave colada na sola, 92% da largura,
 # sola a 21% da borda de baixo, nitidez leve. Roupas e acessórios continuam em fundo branco com sombra.
 # Uso: python3 fotos.py <pasta_origem> <pasta_destino> <raw.json>
 # O nome do arquivo é a referência do Linx (REF.jpg, REF_2.png ...); qualquer formato que o Pillow abra.
@@ -15,7 +15,7 @@ from scipy import ndimage as ndi
 try: import pillow_avif  # noqa
 except Exception: pass
 S=1000
-LARG=float(os.environ.get('LARG','0.92')); BASE=float(os.environ.get('BASE','0.79')); FUNDO=int(os.environ.get('FUNDO','219')); SOMBRA=float(os.environ.get('SOMBRA','0')); NIT=int(os.environ.get('NIT','60'))
+LARG=float(os.environ.get('LARG','0.92')); BASE=float(os.environ.get('BASE','0.79')); FUNDO=int(os.environ.get('FUNDO','219')); SOMBRA=float(os.environ.get('SOMBRA','1')); NIT=int(os.environ.get('NIT','60'))
 SRGB=ImageCms.createProfile('sRGB')
 
 def abrir(p):
