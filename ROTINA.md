@@ -48,6 +48,7 @@ Depois de todo push que muda o site: `python3 painel/monta.py /home/claude/catal
 publish_files do arquivo como index.html no slug 02f6af4d (base_version do get_artifact). Comentários feitos no site viram pedidos de mudança no site real.
 
 ## Descrições de produto e página de produto (desde 23/11/2026)
+- Nomes de tecnologia, espuma, placa, cabedal e solado ficam exatamente como no site da marca (com ™/®, sem traduzir: "Engineered mesh upper", "FF BLAST™ MAX cushioning"). Só o texto de ligação fica em português. Pedido do Leonardo em 23/11/2026.
 - Cada produto tem página própria no site (#p/marca-modelo-cor), com galeria, cores, tamanhos, descrição e ficha técnica.
 - Descrições ficam no painel 02f6af4d, coleção `descricoes` (id = slug de marca + modelo; status pendente/aprovado; aprovado_em, publicado_em).
 - Produto novo no site (modelo sem doc em `descricoes`): buscar dados SÓ no site oficial da marca, escrever no padrão (Descrição 2–3 frases, Indicado para, Ficha: Amortecimento, Pisada, Drop, Peso, Entressola, Cabedal, Solado; "—" quando a marca não informa), gravar como "pendente" com fontes, e avisar o Leonardo.
