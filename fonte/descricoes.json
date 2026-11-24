@@ -142,5 +142,41 @@
   "cabedal": "Sintético | FantomFit",
   "solado": "Borracha para tração",
   "aprovado_em": 1795522111270
+ },
+ "new-balance-fresh-foam-ellipse": {
+  "descricao": "Combina a tecnologia Fresh Foam X com um design curvado (rocker) do solado, que facilita a transição e dá propulsão, para treinar com conforto e menos esforço.",
+  "indicado": "Rodagem diária",
+  "amortecimento": "Alto",
+  "pisada": "Neutra",
+  "drop": "8 mm",
+  "peso": "218 g",
+  "entressola": "Fresh Foam X",
+  "cabedal": "Engineered Mesh",
+  "solado": "Borracha Injetada",
+  "aprovado_em": 1795553773687
+ },
+ "new-balance-fresh-foam-x-kaiha-road-v2": {
+  "descricao": "Tênis de rua para os treinos do dia a dia, com amortecimento Fresh Foam e cabedal têxtil leve, sem costuras.",
+  "indicado": "Rodagem diária",
+  "amortecimento": "—",
+  "pisada": "—",
+  "drop": "—",
+  "peso": "240 g",
+  "entressola": "Fresh Foam",
+  "cabedal": "Têxtil com Engineered Mesh",
+  "solado": "—",
+  "aprovado_em": 1795553680694
+ },
+ "new-balance-fresh-foam-x-more-v6": {
+  "descricao": "Segundo a New Balance, é a experiência mais amortecida da linha Fresh Foam X. Macio e respirável, serve para correr longe e para usar o dia todo.",
+  "indicado": "Rodagem diária, longões e caminhada",
+  "amortecimento": "Máximo",
+  "pisada": "Neutra",
+  "drop": "4 mm",
+  "peso": "241 g",
+  "entressola": "Fresh Foam X",
+  "cabedal": "Sintético",
+  "solado": "—",
+  "aprovado_em": 1795553725327
  }
 }
