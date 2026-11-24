@@ -138,6 +138,7 @@ main .wrap{padding-block:20px 48px}
 .foto.tem .cat{color:var(--carbono);background:var(--volt);padding:4px 6px;border-radius:3px}
 .foto.tem .ref{color:#6b7178}
 .foto .ref{position:relative;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:#9aa1a8}
+.foto .novo{z-index:1;position:absolute;right:14px;top:14px;font:600 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;background:var(--carbono);color:var(--volt);padding:4px 6px;border-radius:3px}
 .foto .cat{z-index:1;position:absolute;left:14px;top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--volt)}
 .info{padding:14px 14px 16px;display:flex;flex-direction:column;gap:10px;flex:1}
 .mk{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
@@ -311,6 +312,9 @@ body.vendo{overflow:hidden}
 
 <script>
 const ITENS = __DADOS__;
+// selo "Novidade": 30 dias a partir da entrada do produto no site (ent); some sozinho depois. Cargas iniciais (até 27/10/2026) não contam.
+const NOVO_DIAS = 30, NOVO_DESDE = "2026-10-28";
+const novo = i => i.ent >= NOVO_DESDE && (Date.now() - new Date(i.ent+"T00:00:00-03:00")) / 864e5 < NOVO_DIAS;
 const CIRC = "img/circuito.png";
 const brl = v => "R$ " + v.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d),)/g, ".");
 const tc = s => s.toLowerCase().replace(/(^|[\s/-])(\p{L})/gu, (m,a,b)=>a+b.toUpperCase());
@@ -393,6 +397,7 @@ function render(){
       <div class="foto${i.foto?" tem":""}${i.foto&&i.grupo==="Tênis"?" cinza":""}" data-prod="${i.id}" role="button" tabindex="0" aria-label="Ver ${i.marca} ${i.modelo}">
         ${i.foto?`<img class="p" src="${i.foto}" alt="${i.marca} ${i.modelo} ${i.cor}" loading="lazy">`:`<img class="c" src="${CIRC}" alt="">`}
         <span class="cat">${i.grupo==="Tênis"?i.cat:i.grupo}</span>
+        ${novo(i)?`<span class="novo">Novidade</span>`:""}
         ${i.foto?`<span class="lupa" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>`:""}
       </div>
       <div class="info">
