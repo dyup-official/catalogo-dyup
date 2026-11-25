@@ -178,5 +178,29 @@
   "cabedal": "Sintético",
   "solado": "—",
   "aprovado_em": 1795553725327
+ },
+ "hoka-skyflow": {
+  "descricao": "Tênis para os treinos do dia a dia, com espuma de EVA amortecida e geometria inspirada no Skyward X.",
+  "indicado": "Rodagem diária",
+  "amortecimento": "Alto",
+  "pisada": "Neutra",
+  "drop": "5 mm",
+  "peso": "283 g",
+  "entressola": "SCF EVA | Early-Stage MetaRocker™, sem placa",
+  "cabedal": "Creel Jacquard",
+  "solado": "Borracha Injetada",
+  "aprovado_em": 1795553862095
+ },
+ "hoka-speedgoat-7": {
+  "descricao": "Feito para trilhas, o Speedgoat 7 tem a nova entressola de espuma SCF, mais responsiva, e solado Vibram® Megagrip com cravos de 5 mm para tração em terreno solto.",
+  "indicado": "Trilha",
+  "amortecimento": "Responsivo",
+  "pisada": "Neutra",
+  "drop": "5 mm",
+  "peso": "275 g",
+  "entressola": "SCF EVA, sem placa",
+  "cabedal": "Tecido RPET leve",
+  "solado": "Vibram® Megagrip | Traction Lug, cravos de 5 mm",
+  "aprovado_em": 1795553819519
  }
 }
