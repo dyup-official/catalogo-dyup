@@ -19,6 +19,12 @@ Seja qual for o nome do arquivo salvo na pasta, a ordem no site é:
 3. Rodar o script `foto_catalogo.py` em cada foto: `python foto_catalogo.py entrada.jpg saida.jpg`.
 4. Conferir a borda da sola e do calcanhar ampliando a imagem. Se sobrar contorno do fundo antigo ou faltar pedaço do produto, não corrigir à mão. Avisar o Leonardo e deixar a foto de fora até resolver.
 
+## Roupas e acessórios (28/11/2026)
+- Mesmo fundo #F8F7F2 e 1000 × 1000 px dos tênis, com o script `foto_roupa.py`: `python foto_roupa.py entrada.jpg saida.jpg`.
+- Enquadramento: produto centralizado, cabendo numa área de 80% da largura e 80% da altura.
+- Sem sombra nenhuma (nem a da foto original, que em roupa deixa mancha do fundo antigo).
+- Recorte ruim não entra: fica a foto anterior e avisa o Leonardo.
+
 ## O que nunca fazer
 - Recortar por código próprio (seleção por cor, contorno, varinha). O tênis tem partes da mesma cor do fundo, e esse recorte sai serrilhado.
 - Reduzir a foto para menos de 1000 px.
