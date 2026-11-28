@@ -214,5 +214,53 @@
   "cabedal": "Creel Jacquard",
   "solado": "Borracha aderente na frente | Durabrasion no calcanhar",
   "aprovado_em": 1795612000476
+ },
+ "hoka-cielo-x1-3-0": {
+  "descricao": "O tênis de competição da HOKA, com duas camadas de espuma PEBA e placa de fibra de carbono, amortecimento responsivo e apenas 213 g, feito para o dia da prova.",
+  "indicado": "Prova",
+  "amortecimento": "Responsivo",
+  "pisada": "Neutra",
+  "drop": "7 mm",
+  "peso": "213 g",
+  "entressola": "PEBA | Placa de fibra de carbono",
+  "cabedal": "Leno Weave",
+  "solado": "Poliuretano moldado por compressão",
+  "aprovado_em": 1795870272179
+ },
+ "nike-air-winflo-12": {
+  "descricao": "Amortecimento responsivo com uma unidade Nike Air no calcanhar e uma camada mais alta de espuma Cushlon 3.0, para mais conforto e retorno de energia em ritmo equilibrado.",
+  "indicado": "Rodagem diária",
+  "amortecimento": "Responsivo",
+  "pisada": "Neutra",
+  "drop": "10 mm",
+  "peso": "322 g",
+  "entressola": "Cushlon 3.0 | Nike Air",
+  "cabedal": "Mesh vazado",
+  "solado": "Sulcos de flexão",
+  "aprovado_em": 1795870240896
+ },
+ "nike-vomero-18": {
+  "descricao": "O Vomero 18 tem duas espumas empilhadas: ZoomX em cima, macia e responsiva, e ReactX embaixo. É o tênis mais amortecido da linha de corrida da Nike.",
+  "indicado": "Rodagem diária e recuperação",
+  "amortecimento": "Máximo",
+  "pisada": "Neutra",
+  "drop": "10 mm",
+  "peso": "325 g",
+  "entressola": "ZoomX | ReactX",
+  "cabedal": "Engineered Mesh",
+  "solado": "Gomos ao redor do solado",
+  "aprovado_em": 1795798672708
+ },
+ "nike-vomero-plus": {
+  "descricao": "Amortecimento máximo com espuma ZoomX em todo o comprimento, leve e macia, para rodagens muito confortáveis.",
+  "indicado": "Rodagem diária, longões e recuperação",
+  "amortecimento": "Máximo",
+  "pisada": "Neutra",
+  "drop": "10 mm",
+  "peso": "292 g",
+  "entressola": "ZoomX",
+  "cabedal": "Engineered Mesh",
+  "solado": "Borracha de alta abrasão",
+  "aprovado_em": 1795798654777
  }
 }
